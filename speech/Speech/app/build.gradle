@@ -1,0 +1,131 @@
+/*
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion '24.0.1'
+
+    defaultConfig {
+        applicationId "com.google.cloud.android.speech"
+        targetSdkVersion 24
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(project.properties.storeFile)
+            storePassword project.properties.storePassword
+            keyAlias project.properties.keyAlias
+            keyPassword project.properties.keyPassword
+        }
+    }
+
+    productFlavors {
+        dev {
+            // Minimum version with platform multi-dex support
+            minSdkVersion 21
+        }
+        prod {
+            // Minimum version that can run gRPC (TLS extension)
+            minSdkVersion 16
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            multiDexEnabled true
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0-beta-3'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:0.15.0'
+        }
+    }
+    generateProtoTasks {
+        all().each {
+            task ->
+                task.builtins {
+                    remove javanano
+                    java {
+                    }
+                }
+                task.plugins {
+                    grpc {
+                    }
+                }
+        }
+    }
+}
+
+ext {
+    supportLibraryVersion = '24.2.0'
+    grpcVersion = '0.15.0'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Support libraries
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+
+    // gRPC
+    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile("io.grpc:grpc-protobuf:${grpcVersion}") {
+        exclude module: 'jsr305'
+    }
+    compile("io.grpc:grpc-stub:${grpcVersion}") {
+        exclude module: 'jsr305'
+    }
+    compile("io.grpc:grpc-auth:${grpcVersion}") {
+        exclude module: 'jsr305'
+    }
+    compile("io.grpc:grpc-okhttp:${grpcVersion}") {
+        exclude module: 'jsr305'
+    }
+
+    // OAuth2 for Google API
+    compile("com.google.auth:google-auth-library-oauth2-http:0.3.0") {
+        exclude module: 'jsr305'
+        exclude module: 'httpclient'
+    }
+
+    // Tests
+    testCompile 'junit:junit:4.12'
+    androidTestCompile('com.android.support.test:runner:0.5') {
+        exclude module: 'support-annotations'
+    }
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude module: 'support-annotations'
+    }
+}

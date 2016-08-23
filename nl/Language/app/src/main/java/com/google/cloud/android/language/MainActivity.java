@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Callb
         }
     };
 
+    private View mIntroduction;
+
     private View mResults;
 
     private View mProgress;
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Callb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mIntroduction = findViewById(R.id.introduction);
         mResults = findViewById(R.id.results);
         mProgress = findViewById(R.id.progress);
 
@@ -132,11 +135,11 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Callb
             // Configuration changes; restore UI states
             boolean results = savedInstanceState.getBoolean(STATE_SHOWING_RESULTS);
             if (results) {
+                mIntroduction.setVisibility(View.GONE);
                 mResults.setVisibility(View.VISIBLE);
                 mProgress.setVisibility(View.INVISIBLE);
             } else {
                 mResults.setVisibility(View.INVISIBLE);
-                mProgress.setVisibility(View.VISIBLE);
             }
         }
 
@@ -209,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Callb
     }
 
     private void showProgress() {
+        mIntroduction.setVisibility(View.GONE);
         if (mResults.getVisibility() == View.VISIBLE) {
             mHidingResult = true;
             ViewCompat.animate(mResults)
@@ -232,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Callb
     }
 
     private void showResults() {
+        mIntroduction.setVisibility(View.GONE);
         if (mProgress.getVisibility() == View.VISIBLE) {
             ViewCompat.animate(mProgress)
                     .alpha(0.f)

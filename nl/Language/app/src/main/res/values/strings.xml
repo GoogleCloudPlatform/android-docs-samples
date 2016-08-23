@@ -24,6 +24,10 @@
         phones.
     </string>
 
+    <string name="introduction">
+        Enter text in English, Spanish or Japanese.
+    </string>
+
     <string-array name="api_names">
         <item>Entities</item>
         <item>Sentiment</item>

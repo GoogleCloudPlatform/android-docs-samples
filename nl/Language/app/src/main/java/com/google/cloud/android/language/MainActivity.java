@@ -74,7 +74,9 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Callb
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             // Enter pressed; Start analyzing the input.
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                    (event.getAction() == KeyEvent.ACTION_DOWN &&
+                            event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 startAnalyze();
                 return true;
             }

@@ -39,6 +39,7 @@ import com.google.cloud.android.language.model.EntityInfo;
 import com.google.cloud.android.language.model.SentimentInfo;
 import com.google.cloud.android.language.model.TokenInfo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -199,6 +200,7 @@ public class ApiFragment extends Fragment {
     }
 
     private void deliverResponse(GenericJson response) {
+        final Activity activity = getActivity();
         if (response instanceof AnalyzeEntitiesResponse) {
             final List<Entity> entities = ((AnalyzeEntitiesResponse) response).getEntities();
             final int size = entities.size();
@@ -206,19 +208,23 @@ public class ApiFragment extends Fragment {
             for (int i = 0; i < size; i++) {
                 array[i] = new EntityInfo(entities.get(i));
             }
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onEntitiesReady(array);
+                    if (mCallback != null) {
+                        mCallback.onEntitiesReady(array);
+                    }
                 }
             });
         } else if (response instanceof AnalyzeSentimentResponse) {
             final SentimentInfo sentiment = new SentimentInfo(((AnalyzeSentimentResponse) response)
                     .getDocumentSentiment());
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onSentimentReady(sentiment);
+                    if (mCallback != null) {
+                        mCallback.onSentimentReady(sentiment);
+                    }
                 }
             });
         } else if (response instanceof AnnotateTextResponse) {
@@ -228,10 +234,12 @@ public class ApiFragment extends Fragment {
             for (int i = 0; i < size; i++) {
                 array[i] = new TokenInfo(tokens.get(i));
             }
-            getActivity().runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mCallback.onSyntaxReady(array);
+                    if (mCallback != null) {
+                        mCallback.onSyntaxReady(array);
+                    }
                 }
             });
         }

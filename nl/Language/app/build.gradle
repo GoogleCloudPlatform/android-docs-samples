@@ -49,6 +49,9 @@ dependencies {
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
 
+    // FlexboxLayout
+    compile 'com.google.android:flexbox:0.2.3'
+
     // Dependencies for Google API Client Libraries
     compile("com.google.http-client:google-http-client:$googleApiClientVersion") {
         exclude module: 'httpclient'

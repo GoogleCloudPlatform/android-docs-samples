@@ -38,7 +38,7 @@ android {
 }
 
 ext {
-    supportLibraryVersion = '24.2.0'
+    supportLibraryVersion = '24.2.1'
     googleApiClientVersion = '1.22.0'
 }
 

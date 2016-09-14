@@ -1,0 +1,77 @@
+/*
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion '24.0.2'
+
+    defaultConfig {
+        applicationId 'com.google.cloud.android.language'
+        minSdkVersion 9
+        targetSdkVersion 24
+        versionCode 1
+        versionName '1.0'
+        vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+ext {
+    supportLibraryVersion = '24.2.1'
+    googleApiClientVersion = '1.22.0'
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Support libraries
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+
+    // FlexboxLayout
+    compile 'com.google.android:flexbox:0.2.3'
+
+    // Dependencies for Google API Client Libraries
+    compile("com.google.http-client:google-http-client:$googleApiClientVersion") {
+        exclude module: 'httpclient'
+        exclude module: 'jsr305'
+    }
+    compile("com.google.api-client:google-api-client-android:$googleApiClientVersion"){
+        exclude module: 'httpclient'
+        exclude module: 'jsr305'
+    }
+    compile("com.google.apis:google-api-services-language:v1beta1-rev5-$googleApiClientVersion") {
+        exclude module: 'httpclient'
+        exclude module: 'jsr305'
+    }
+
+    // Tests
+    testCompile 'junit:junit:4.12'
+    androidTestCompile('com.android.support.test:runner:0.5') {
+        exclude module: 'support-annotations'
+    }
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude module: 'support-annotations'
+    }
+}

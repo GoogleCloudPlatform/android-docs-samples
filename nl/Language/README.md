@@ -8,7 +8,7 @@ This directory contains Android example that uses the
 ### Enable the Natural Language API
 
 If you have not already done so, [enable the Google Cloud Natural Language API for your
-project](https://console.developers.google.com/apis/api/language.googleapis.com/overview). You must be
+project](https://console.cloud.google.com/apis/api/language.googleapis.com/overview). You must be
 whitelisted to do this.
 
 ### Set Up to Authenticate With Your Project's Credentials

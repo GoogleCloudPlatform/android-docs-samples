@@ -39,6 +39,7 @@ public class VoiceRecorder {
 
     private static final int AMPLITUDE_THRESHOLD = 1500;
     private static final int SPEECH_TIMEOUT_MILLIS = 2000;
+    private static final int MAX_SPEECH_LENGTH_MILLIS = 30 * 1000;
 
     public static abstract class Callback {
 
@@ -76,6 +77,9 @@ public class VoiceRecorder {
 
     /** The timestamp of the last time that voice is heard. */
     private long mLastVoiceHeardMillis = Long.MAX_VALUE;
+
+    /** The timestamp when the current voice is started. */
+    private long mVoiceStartedMillis;
 
     public VoiceRecorder(@NonNull Callback callback) {
         mCallback = callback;
@@ -180,22 +184,30 @@ public class VoiceRecorder {
                         break;
                     }
                     final int size = mAudioRecord.read(mBuffer, 0, mBuffer.length);
+                    final long now = System.currentTimeMillis();
                     if (isHearingVoice(mBuffer, size)) {
                         if (mLastVoiceHeardMillis == Long.MAX_VALUE) {
+                            mVoiceStartedMillis = now;
                             mCallback.onVoiceStart();
                         }
                         mCallback.onVoice(mBuffer, size);
-                        mLastVoiceHeardMillis = System.currentTimeMillis();
+                        mLastVoiceHeardMillis = now;
+                        if (now - mVoiceStartedMillis > MAX_SPEECH_LENGTH_MILLIS) {
+                            end();
+                        }
                     } else if (mLastVoiceHeardMillis != Long.MAX_VALUE) {
                         mCallback.onVoice(mBuffer, size);
-                        if (System.currentTimeMillis() - mLastVoiceHeardMillis
-                                > SPEECH_TIMEOUT_MILLIS) {
-                            mLastVoiceHeardMillis = Long.MAX_VALUE;
-                            mCallback.onVoiceEnd();
+                        if (now - mLastVoiceHeardMillis > SPEECH_TIMEOUT_MILLIS) {
+                            end();
                         }
                     }
                 }
             }
+        }
+
+        private void end() {
+            mLastVoiceHeardMillis = Long.MAX_VALUE;
+            mCallback.onVoiceEnd();
         }
 
         private boolean isHearingVoice(byte[] buffer, int size) {

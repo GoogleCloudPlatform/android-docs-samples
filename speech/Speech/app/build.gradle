@@ -18,12 +18,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "com.google.cloud.android.speech"
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName '1.0'
     }
@@ -61,13 +61,18 @@ android {
     }
 }
 
+ext {
+    supportLibraryVersion = '25.2.0'
+    grpcVersion = '1.1.2'
+}
+
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0-beta-3'
+        artifact = 'com.google.protobuf:protoc:3.2.0'
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:0.15.0'
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
     generateProtoTasks {
@@ -84,11 +89,6 @@ protobuf {
                 }
         }
     }
-}
-
-ext {
-    supportLibraryVersion = '24.2.1'
-    grpcVersion = '0.15.0'
 }
 
 dependencies {
@@ -115,7 +115,7 @@ dependencies {
     }
 
     // OAuth2 for Google API
-    compile("com.google.auth:google-auth-library-oauth2-http:0.3.0") {
+    compile("com.google.auth:google-auth-library-oauth2-http:0.6.0") {
         exclude module: 'jsr305'
         exclude module: 'httpclient'
     }

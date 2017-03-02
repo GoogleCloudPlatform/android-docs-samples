@@ -16,16 +16,16 @@
 
 package com.google.cloud.android.speech;
 
-import com.google.auth.oauth2.AccessToken;
-
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,38 +40,40 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements ApiFragment.Listener,
-        MessageDialogFragment.Listener {
+public class MainActivity extends AppCompatActivity implements MessageDialogFragment.Listener {
 
-    private static final int LOADER_ACCESS_TOKEN = 1;
-
-    private static final String FRAGMENT_API = "api";
     private static final String FRAGMENT_MESSAGE_DIALOG = "message_dialog";
 
     private static final String STATE_RESULTS = "results";
 
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 1;
 
+    private SpeechService mSpeechService;
 
     private VoiceRecorder mVoiceRecorder;
-
     private final VoiceRecorder.Callback mVoiceCallback = new VoiceRecorder.Callback() {
 
         @Override
         public void onVoiceStart() {
             showStatus(true);
-            getApiFragment().startRecognizing(mVoiceRecorder.getSampleRate());
+            if (mSpeechService != null) {
+                mSpeechService.startRecognizing(mVoiceRecorder.getSampleRate());
+            }
         }
 
         @Override
         public void onVoice(byte[] data, int size) {
-            getApiFragment().recognize(data, size);
+            if (mSpeechService != null) {
+                mSpeechService.recognize(data, size);
+            }
         }
 
         @Override
         public void onVoiceEnd() {
             showStatus(false);
-            getApiFragment().finishRecognizing();
+            if (mSpeechService != null) {
+                mSpeechService.finishRecognizing();
+            }
         }
 
     };
@@ -85,6 +87,22 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
     private TextView mText;
     private ResultAdapter mAdapter;
     private RecyclerView mRecyclerView;
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            mSpeechService = SpeechService.from(binder);
+            mSpeechService.addListener(mSpeechServiceListener);
+            mStatus.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mSpeechService = null;
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,14 +124,16 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
                 savedInstanceState.getStringArrayList(STATE_RESULTS);
         mAdapter = new ResultAdapter(results);
         mRecyclerView.setAdapter(mAdapter);
-
-        prepareApi();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
+        // Prepare Cloud Speech API
+        bindService(new Intent(this, SpeechService.class), mServiceConnection, BIND_AUTO_CREATE);
+
+        // Start listening to voices
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 == PackageManager.PERMISSION_GRANTED) {
             startVoiceRecorder();
@@ -128,7 +148,14 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
 
     @Override
     protected void onStop() {
+        // Stop listening to voice
         stopVoiceRecorder();
+
+        // Stop Cloud Speech API
+        mSpeechService.removeListener(mSpeechServiceListener);
+        unbindService(mServiceConnection);
+        mSpeechService = null;
+
         super.onStop();
     }
 
@@ -142,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
             if (permissions.length == 1 && grantResults.length == 1
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -176,27 +203,6 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
                 .show(getSupportFragmentManager(), FRAGMENT_MESSAGE_DIALOG);
     }
 
-    @Override
-    public void onSpeechRecognized(final String text, final boolean isFinal) {
-        if (isFinal) {
-            mVoiceRecorder.dismiss();
-        }
-        if (mText != null && !TextUtils.isEmpty(text)) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (isFinal) {
-                        mText.setText(null);
-                        mAdapter.addResult(text);
-                        mRecyclerView.smoothScrollToPosition(0);
-                    } else {
-                        mText.setText(text);
-                    }
-                }
-            });
-        }
-    }
-
     private void showStatus(final boolean hearingVoice) {
         runOnUiThread(new Runnable() {
             @Override
@@ -212,41 +218,35 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
                 REQUEST_RECORD_AUDIO_PERMISSION);
     }
 
-    private ApiFragment getApiFragment() {
-        return (ApiFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_API);
-    }
-
-    private void prepareApi() {
-        if (getApiFragment() == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(new ApiFragment(), FRAGMENT_API)
-                    .commit();
-        }
-        getSupportLoaderManager().initLoader(LOADER_ACCESS_TOKEN, null,
-                new LoaderManager.LoaderCallbacks<AccessToken>() {
-                    @Override
-                    public Loader<AccessToken> onCreateLoader(int id, Bundle args) {
-                        return new AccessTokenLoader(MainActivity.this);
+    private final SpeechService.Listener mSpeechServiceListener =
+            new SpeechService.Listener() {
+                @Override
+                public void onSpeechRecognized(final String text, final boolean isFinal) {
+                    if (isFinal) {
+                        mVoiceRecorder.dismiss();
                     }
-
-                    @Override
-                    public void onLoadFinished(Loader<AccessToken> loader, AccessToken token) {
-                        getApiFragment().setAccessToken(token);
-                        mStatus.setVisibility(View.VISIBLE);
+                    if (mText != null && !TextUtils.isEmpty(text)) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isFinal) {
+                                    mText.setText(null);
+                                    mAdapter.addResult(text);
+                                    mRecyclerView.smoothScrollToPosition(0);
+                                } else {
+                                    mText.setText(text);
+                                }
+                            }
+                        });
                     }
-
-                    @Override
-                    public void onLoaderReset(Loader<AccessToken> loader) {
-                        // Do nothing
-                    }
-                });
-    }
+                }
+            };
 
     private static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView text;
 
-        public ViewHolder(LayoutInflater inflater, ViewGroup parent) {
+        ViewHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.item_result, parent, false));
             text = (TextView) itemView.findViewById(R.id.text);
         }
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
 
         private final ArrayList<String> mResults = new ArrayList<>();
 
-        public ResultAdapter(ArrayList<String> results) {
+        ResultAdapter(ArrayList<String> results) {
             if (results != null) {
                 mResults.addAll(results);
             }
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements ApiFragment.Liste
             return mResults.size();
         }
 
-        public void addResult(String result) {
+        void addResult(String result) {
             mResults.add(0, result);
             notifyItemInserted(0);
         }

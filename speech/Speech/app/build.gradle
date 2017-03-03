@@ -17,6 +17,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
+ext {
+    supportLibraryVersion = '25.2.0'
+    grpcVersion = '1.1.2'
+    protobufVersion = '3.2.0'
+}
+
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
@@ -59,34 +65,34 @@ android {
             signingConfig signingConfigs.release
         }
     }
-}
 
-ext {
-    supportLibraryVersion = '25.2.0'
-    grpcVersion = '1.1.2'
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+        resolutionStrategy.force "com.android.support:support-annotations:$supportLibraryVersion"
+    }
 }
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.2.0'
+        artifact = "com.google.protobuf:protoc:$protobufVersion"
     }
     plugins {
+        javalite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+        }
         grpc {
             artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
     generateProtoTasks {
-        all().each {
-            task ->
-                task.builtins {
-                    remove javanano
-                    java {
-                    }
+        all().each { task ->
+            task.plugins {
+                javalite {}
+                grpc {
+                    // Options added to --grpc_out
+                    option 'lite'
                 }
-                task.plugins {
-                    grpc {
-                    }
-                }
+            }
         }
     }
 }
@@ -100,32 +106,19 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
 
     // gRPC
+    compile "io.grpc:grpc-okhttp:$grpcVersion"
+    compile "io.grpc:grpc-protobuf-lite:$grpcVersion"
+    compile "io.grpc:grpc-stub:$grpcVersion"
     compile 'javax.annotation:javax.annotation-api:1.2'
-    compile("io.grpc:grpc-protobuf:${grpcVersion}") {
-        exclude module: 'jsr305'
-    }
-    compile("io.grpc:grpc-stub:${grpcVersion}") {
-        exclude module: 'jsr305'
-    }
-    compile("io.grpc:grpc-auth:${grpcVersion}") {
-        exclude module: 'jsr305'
-    }
-    compile("io.grpc:grpc-okhttp:${grpcVersion}") {
-        exclude module: 'jsr305'
-    }
+    protobuf "com.google.protobuf:protobuf-java:$protobufVersion"
 
     // OAuth2 for Google API
-    compile("com.google.auth:google-auth-library-oauth2-http:0.6.0") {
-        exclude module: 'jsr305'
+    compile('com.google.auth:google-auth-library-oauth2-http:0.6.0') {
         exclude module: 'httpclient'
     }
 
     // Tests
     testCompile 'junit:junit:4.12'
-    androidTestCompile('com.android.support.test:runner:0.5') {
-        exclude module: 'support-annotations'
-    }
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {
-        exclude module: 'support-annotations'
-    }
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }

@@ -32,13 +32,13 @@ import android.util.Log;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.speech.v1beta1.RecognitionConfig;
-import com.google.cloud.speech.v1beta1.SpeechGrpc;
-import com.google.cloud.speech.v1beta1.SpeechRecognitionAlternative;
-import com.google.cloud.speech.v1beta1.StreamingRecognitionConfig;
-import com.google.cloud.speech.v1beta1.StreamingRecognitionResult;
-import com.google.cloud.speech.v1beta1.StreamingRecognizeRequest;
-import com.google.cloud.speech.v1beta1.StreamingRecognizeResponse;
+import com.google.cloud.speech.v1.RecognitionConfig;
+import com.google.cloud.speech.v1.SpeechGrpc;
+import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
+import com.google.cloud.speech.v1.StreamingRecognitionConfig;
+import com.google.cloud.speech.v1.StreamingRecognitionResult;
+import com.google.cloud.speech.v1.StreamingRecognizeRequest;
+import com.google.cloud.speech.v1.StreamingRecognizeResponse;
 import com.google.protobuf.ByteString;
 
 import java.io.IOException;
@@ -219,7 +219,7 @@ public class SpeechService extends Service {
                         .setConfig(RecognitionConfig.newBuilder()
                                 .setLanguageCode(getDefaultLanguageCode())
                                 .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                                .setSampleRate(sampleRate)
+                                .setSampleRateHertz(sampleRate)
                                 .build())
                         .setInterimResults(true)
                         .setSingleUtterance(true)

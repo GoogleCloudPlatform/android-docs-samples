@@ -17,7 +17,7 @@
 package com.google.cloud.android.language;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.services.language.v1beta1.CloudNaturalLanguageAPIScopes;
+import com.google.api.services.language.v1.CloudNaturalLanguageScopes;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -55,7 +55,7 @@ public class AccessTokenLoader extends AsyncTaskLoader<String> {
         if (currentToken != null) {
             final GoogleCredential credential = new GoogleCredential()
                     .setAccessToken(currentToken)
-                    .createScoped(CloudNaturalLanguageAPIScopes.all());
+                    .createScoped(CloudNaturalLanguageScopes.all());
             final Long seconds = credential.getExpiresInSeconds();
             if (seconds != null && seconds > 3600) {
                 return currentToken;
@@ -70,7 +70,7 @@ public class AccessTokenLoader extends AsyncTaskLoader<String> {
         final InputStream stream = getContext().getResources().openRawResource(R.raw.credential);
         try {
             final GoogleCredential credential = GoogleCredential.fromStream(stream)
-                    .createScoped(CloudNaturalLanguageAPIScopes.all());
+                    .createScoped(CloudNaturalLanguageScopes.all());
             credential.refreshToken();
             final String accessToken = credential.getAccessToken();
             prefs.edit().putString(PREF_ACCESS_TOKEN, accessToken).apply();

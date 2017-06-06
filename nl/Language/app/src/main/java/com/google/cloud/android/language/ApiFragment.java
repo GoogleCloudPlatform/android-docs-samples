@@ -22,19 +22,19 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.language.v1beta1.CloudNaturalLanguageAPI;
-import com.google.api.services.language.v1beta1.CloudNaturalLanguageAPIRequest;
-import com.google.api.services.language.v1beta1.CloudNaturalLanguageAPIScopes;
-import com.google.api.services.language.v1beta1.model.AnalyzeEntitiesRequest;
-import com.google.api.services.language.v1beta1.model.AnalyzeEntitiesResponse;
-import com.google.api.services.language.v1beta1.model.AnalyzeSentimentRequest;
-import com.google.api.services.language.v1beta1.model.AnalyzeSentimentResponse;
-import com.google.api.services.language.v1beta1.model.AnnotateTextRequest;
-import com.google.api.services.language.v1beta1.model.AnnotateTextResponse;
-import com.google.api.services.language.v1beta1.model.Document;
-import com.google.api.services.language.v1beta1.model.Entity;
-import com.google.api.services.language.v1beta1.model.Features;
-import com.google.api.services.language.v1beta1.model.Token;
+import com.google.api.services.language.v1.CloudNaturalLanguage;
+import com.google.api.services.language.v1.CloudNaturalLanguageRequest;
+import com.google.api.services.language.v1.CloudNaturalLanguageScopes;
+import com.google.api.services.language.v1.model.AnalyzeEntitiesRequest;
+import com.google.api.services.language.v1.model.AnalyzeEntitiesResponse;
+import com.google.api.services.language.v1.model.AnalyzeSentimentRequest;
+import com.google.api.services.language.v1.model.AnalyzeSentimentResponse;
+import com.google.api.services.language.v1.model.AnnotateTextRequest;
+import com.google.api.services.language.v1.model.AnnotateTextResponse;
+import com.google.api.services.language.v1.model.Document;
+import com.google.api.services.language.v1.model.Entity;
+import com.google.api.services.language.v1.model.Features;
+import com.google.api.services.language.v1.model.Token;
 import com.google.cloud.android.language.model.EntityInfo;
 import com.google.cloud.android.language.model.SentimentInfo;
 import com.google.cloud.android.language.model.TokenInfo;
@@ -88,7 +88,7 @@ public class ApiFragment extends Fragment {
 
     private GoogleCredential mCredential;
 
-    private CloudNaturalLanguageAPI mApi = new CloudNaturalLanguageAPI.Builder(
+    private CloudNaturalLanguage mApi = new CloudNaturalLanguage.Builder(
             new NetHttpTransport(),
             JacksonFactory.getDefaultInstance(),
             new HttpRequestInitializer() {
@@ -98,7 +98,7 @@ public class ApiFragment extends Fragment {
                 }
             }).build();
 
-    private final BlockingQueue<CloudNaturalLanguageAPIRequest<? extends GenericJson>> mRequests
+    private final BlockingQueue<CloudNaturalLanguageRequest<? extends GenericJson>> mRequests
             = new ArrayBlockingQueue<>(3);
 
     private Thread mThread;
@@ -127,7 +127,7 @@ public class ApiFragment extends Fragment {
     public void setAccessToken(String token) {
         mCredential = new GoogleCredential()
                 .setAccessToken(token)
-                .createScoped(CloudNaturalLanguageAPIScopes.all());
+                .createScoped(CloudNaturalLanguageScopes.all());
         startWorkerThread();
     }
 

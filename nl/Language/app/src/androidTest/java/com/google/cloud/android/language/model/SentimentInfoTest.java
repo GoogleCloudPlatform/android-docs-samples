@@ -16,7 +16,7 @@
 
 package com.google.cloud.android.language.model;
 
-import com.google.api.services.language.v1beta1.model.Sentiment;
+import com.google.api.services.language.v1.model.Sentiment;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,13 +31,13 @@ import static org.junit.Assert.assertThat;
 @RunWith(AndroidJUnit4.class)
 public class SentimentInfoTest {
 
-    public static final float POLARITY = -1.f;
+    public static final float SCORE = -1.f;
     public static final float MAGNITUDE = 0.1f;
 
     @Test
     public void newFromSentiment() {
         final SentimentInfo sentiment = new SentimentInfo(createSentiment());
-        assertThat(sentiment.polarity, is(POLARITY));
+        assertThat(sentiment.score, is(SCORE));
         assertThat(sentiment.magnitude, is(MAGNITUDE));
     }
 
@@ -49,7 +49,7 @@ public class SentimentInfoTest {
             parcel.writeParcelable(original, 0);
             parcel.setDataPosition(0);
             final SentimentInfo restored = parcel.readParcelable(getClass().getClassLoader());
-            assertThat(restored.polarity, is(original.polarity));
+            assertThat(restored.score, is(original.score));
             assertThat(restored.magnitude, is(original.magnitude));
         } finally {
             parcel.recycle();
@@ -58,7 +58,7 @@ public class SentimentInfoTest {
 
     private Sentiment createSentiment() {
         return new Sentiment()
-                .setPolarity(POLARITY)
+                .setScore(SCORE)
                 .setMagnitude(MAGNITUDE);
     }
 

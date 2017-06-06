@@ -36,7 +36,7 @@
 
     <string name="salience_format">Salience: %.3f</string>
 
-    <string name="polarity">Polarity</string>
+    <string name="score">Score</string>
     <string name="magnitude">Magnitude</string>
 
 </resources>

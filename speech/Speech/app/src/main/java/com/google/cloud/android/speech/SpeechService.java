@@ -32,9 +32,13 @@ import android.util.Log;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.speech.v1.RecognitionAudio;
 import com.google.cloud.speech.v1.RecognitionConfig;
+import com.google.cloud.speech.v1.RecognizeRequest;
+import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechGrpc;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
+import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.cloud.speech.v1.StreamingRecognitionConfig;
 import com.google.cloud.speech.v1.StreamingRecognitionResult;
 import com.google.cloud.speech.v1.StreamingRecognizeRequest;
@@ -121,6 +125,37 @@ public class SpeechService extends Service {
             if (text != null) {
                 for (Listener listener : mListeners) {
                     listener.onSpeechRecognized(text, isFinal);
+                }
+            }
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            Log.e(TAG, "Error calling the API.", t);
+        }
+
+        @Override
+        public void onCompleted() {
+            Log.i(TAG, "API completed.");
+        }
+
+    };
+
+    private final StreamObserver<RecognizeResponse> mFileResponseObserver
+            = new StreamObserver<RecognizeResponse>() {
+        @Override
+        public void onNext(RecognizeResponse response) {
+            String text = null;
+            if (response.getResultsCount() > 0) {
+                final SpeechRecognitionResult result = response.getResults(0);
+                if (result.getAlternativesCount() > 0) {
+                    final SpeechRecognitionAlternative alternative = result.getAlternatives(0);
+                    text = alternative.getTranscript();
+                }
+            }
+            if (text != null) {
+                for (Listener listener : mListeners) {
+                    listener.onSpeechRecognized(text, true);
                 }
             }
         }
@@ -255,6 +290,30 @@ public class SpeechService extends Service {
         mRequestObserver = null;
     }
 
+    /**
+     * Recognize all data from the specified {@link InputStream}.
+     *
+     * @param stream The audio data.
+     */
+    public void recognizeInputStream(InputStream stream) {
+        try {
+            mApi.recognize(
+                    RecognizeRequest.newBuilder()
+                            .setConfig(RecognitionConfig.newBuilder()
+                                    .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
+                                    .setLanguageCode("en-US")
+                                    .setSampleRateHertz(16000)
+                                    .build())
+                            .setAudio(RecognitionAudio.newBuilder()
+                                    .setContent(ByteString.readFrom(stream))
+                                    .build())
+                            .build(),
+                    mFileResponseObserver);
+        } catch (IOException e) {
+            Log.e(TAG, "Error loading the input", e);
+        }
+    }
+
     private class SpeechBinder extends Binder {
 
         SpeechService getService() {
@@ -321,9 +380,12 @@ public class SpeechService extends Service {
             mApi = SpeechGrpc.newStub(channel);
 
             // Schedule access token refresh before it expires
-            mHandler.postDelayed(mFetchAccessTokenRunnable,
-                    Math.max(accessToken.getExpirationTime().getTime() - System.currentTimeMillis()
-                            - ACCESS_TOKEN_FETCH_MARGIN, ACCESS_TOKEN_EXPIRATION_TOLERANCE));
+            if (mHandler != null) {
+                mHandler.postDelayed(mFetchAccessTokenRunnable,
+                        Math.max(accessToken.getExpirationTime().getTime()
+                                - System.currentTimeMillis()
+                                - ACCESS_TOKEN_FETCH_MARGIN, ACCESS_TOKEN_EXPIRATION_TOLERANCE));
+            }
         }
     }
 

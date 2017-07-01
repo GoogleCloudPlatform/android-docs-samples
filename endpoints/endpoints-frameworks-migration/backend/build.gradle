@@ -51,7 +51,7 @@ dependencies {
 appengine {  // App Engine tasks configuration
     deploy {   // deploy configuration
         version = findProperty("appengine.deploy.version")
-
+        println version
         def promoteProp = findProperty("appengine.deploy.promote")
         if (promoteProp != null) {
             promote = new Boolean(promoteProp)

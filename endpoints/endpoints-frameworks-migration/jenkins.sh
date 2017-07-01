@@ -23,11 +23,9 @@ sed -i'.bak' \
     app/src/main/java/com/example/migration/endpoints/endpointsframeworksmigrationexample/MainActivity.java
 
 # Deploy backend
-pushd backend
-gradle appengineDeploy \
-    -Dapp.deploy.version="${GOOGLE_VERSION_ID}" \
-    -Dapp.deploy.promote=false
-popd
+gradle backend:appengineDeploy \
+    -Pappengine.deploy.promote=false \
+    -Pappengine.deploy.version="${GOOGLE_VERSION_ID}"
 
 # Generate apk from "app" module
 gradle app:assembleAndroidTest

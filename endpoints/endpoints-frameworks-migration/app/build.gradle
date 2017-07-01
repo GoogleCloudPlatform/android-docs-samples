@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-apply plugin: 'com.android.application'
 // [START apply_endpoints_plugin_client]
+apply plugin: 'com.android.application'
 apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
 // [END apply_endpoints_plugin_client]
 
@@ -37,16 +37,16 @@ android {
     }
 }
 
+// [START buildscript_dependencies]
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        // [START buildscript_dependencies]
         classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
-        // [END buildscript_dependencies]
     }
 }
+// [END buildscript_dependencies]
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])

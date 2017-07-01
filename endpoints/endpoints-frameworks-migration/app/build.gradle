@@ -13,9 +13,9 @@
 // limitations under the License.
 
 apply plugin: 'com.android.application'
-// [START apply-endpoints-plugin-client]
+// [START apply_endpoints_plugin_client]
 apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
-// [END apply-endpoints-plugin-client]
+// [END apply_endpoints_plugin_client]
 
 android {
     compileSdkVersion 26

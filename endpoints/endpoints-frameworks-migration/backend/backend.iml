@@ -16,7 +16,12 @@
       <configuration>
         <option name="HTTP_ADDRESS" value="localhost" />
         <option name="HTTP_PORT" value="8080" />
+        <!-- [START deprecated_option]
+        <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-app" />
+        [END deprecated_option] -->
+        <!-- [START migration_option] -->
         <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-backend" />
+        <!-- [END migration_option] -->
         <option name="WEB_APP_DIR" value="$MODULE_DIR$/src/main/webapp" />
         <option name="APPENGINE_SDKROOT" value="$USER_HOME$/.gradle/appengine-sdk/appengine-java-sdk-1.9.42" />
       </configuration>

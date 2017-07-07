@@ -31,9 +31,9 @@ limitations under the License.
       <configuration>
         <option name="HTTP_ADDRESS" value="localhost" />
         <option name="HTTP_PORT" value="8080" />
-        <!-- [START deprecated_option]
+        <!-- [START legacy_option]
         <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-app" />
-        [END deprecated_option] -->
+        [END legacy_option] -->
         <!-- [START migration_option] -->
         <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-backend" />
         <!-- [END migration_option] -->

@@ -20,6 +20,17 @@ buildscript {
         jcenter()
     }
     dependencies {
+        /*
+            The App Engine standard environment Gradle tooling has been updated.
+            In Cloud Endpoints Frameworks 1.0, projects used the `gradle-appengine-plugin`
+            plugin in group `com.google.appengine` and migrated or new projects using
+            Cloud Endpoints Frameworks 2.0, now use the plugin `appengine-gradle-plugin` in
+            group `com.google.cloud.tools`.
+
+            In the previous gradle plugin `gradle-appengine-plugin`, a user was able to generate
+            an API Discovery Document and now is generated using the artifact
+            `endpoints-framework-gradle-plugin` in group `com.google.cloud.tools`.
+        */
         /* [START legacy_plugins]
         classpath 'com.google.appengine:gradle-appengine-plugin:1.9.53'
         [END legacy_plugins] */
@@ -38,6 +49,22 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'war'
 
+/*
+    The following two sections represent how Cloud Endpoints Frameworks 1.0
+    projects applied plugins in a Gradle build script and how the new plugins
+    are applied for Cloud Endpoints Frameworks 2.0 projects.
+
+    The `endpoints-framework-gradle-plugin` provides two plugins to apply given
+    a specific scenario Cloud Endpoints Frameworks 2.0 client-side and
+    server-side projects.
+
+    Client-side - com.google.cloud.tools.endpoints-framework-client
+    Server-side - com.google.cloud.tools.endpoints-framework-server
+
+    This build script uses `com.google.cloud.tools.endpoints-framework-server`
+    because it is the server-side of this Cloud Endpoints Frameworks 2.0 project.
+*/
+
 /* [START legacy_apply]
 apply plugin: 'appengine'
 [END legacy_apply] */
@@ -51,6 +78,12 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
+    /*
+        The following two sections represent dependencies used by
+        Cloud Endpoints Frameworks 1.0 projects in a Gradle build
+        script and how the new plugins are applied for Cloud Endpoints
+        Frameworks 2.0 projects.
+    */
     /* [START legacy_dependencies]
     appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.53'
     compile 'com.google.appengine:appengine-endpoints:1.9.53'
@@ -76,6 +109,10 @@ appengine {  // App Engine tasks configuration
     }
 }
 
+/*
+    The following section was removed as the `gradle-appengine-plugin`
+    is not used not used in Cloud Endpoints Frameworks 2.0 projects.
+*/
 /* [START legacy_appengine_configuration]
 appengine {
     downloadSdk = true

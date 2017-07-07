@@ -40,6 +40,8 @@ public class MainActivityTest {
 
     @Test
     public void mainActivityTest() {
+        // Test send a request to myApi/sayHi with a human's name
+        // and expect the response "Hi, Human's Name!"
         ViewInteraction nameInput = onView(allOf(withId(R.id.person_name_input), isDisplayed()));
         nameInput.perform(replaceText("Human 1"));
 

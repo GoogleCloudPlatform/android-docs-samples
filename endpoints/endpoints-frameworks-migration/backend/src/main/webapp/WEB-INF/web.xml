@@ -16,7 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-    <!-- Uncomment to use Endpoints Frameworks v1.0 and comment the v2.0 section -->
+    <!-- 
+      In Cloud Endpoints Frameworks 2.0, the servlet-class has changed
+      from `SystemServiceServlet` to `EndpointsServlet`.
+      
+      The URL pattern has also been updated from `/_ah/spi/*` to `/_ah/api/*`.
+    -->
+    <!-- Endpoints Frameworks 1.0 section -->
     <!--
     [START appengine-endpoints]
     <servlet>
@@ -37,9 +43,9 @@ limitations under the License.
     </servlet-mapping>
     [END appengine-endpoints]
     -->
-    <!-- End of Endpoints Frameworks v1.0 -->
+    <!-- End of Endpoints Frameworks 1.0 -->
 
-    <!-- Endpoints Frameworks v2.0 -->
+    <!-- Endpoints Frameworks 2.0 -->
     <!-- [START endpoints-frameworks] -->
     <servlet>
         <servlet-name>EndpointsServlet</servlet-name>
@@ -54,7 +60,7 @@ limitations under the License.
         <url-pattern>/_ah/api/*</url-pattern>
     </servlet-mapping>
 		<!-- [END endpoints-frameworks] -->
-		<!-- End of Endpoints Frameworks v2.0 -->
+		<!-- End of Endpoints Frameworks 2.0 -->
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

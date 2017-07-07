@@ -4,10 +4,10 @@
     <option name="myCloudPersistentConfigurations">
       <list>
         <CloudPersistentConfiguration>
-          <option name="name" value="Unnamed" />
+          <option name="name" value="Physical Pixel Device" />
           <option name="devices">
             <list>
-              <option value="Nexus5X" />
+              <option value="sailfish" />
             </list>
           </option>
           <option name="apiLevels">

@@ -36,7 +36,7 @@ gcloud firebase test android run \
    --type instrumentation \
    --app  app/build/outputs/apk/app-debug.apk \
    --test app/build/outputs/apk/app-debug-androidTest.apk \
-   --device model=Nexus5X,version=25,locale=en,orientation=portrait  \
+   --device model=sailfish,version=25,locale=en,orientation=portrait  \
    --timeout 5m
 
 

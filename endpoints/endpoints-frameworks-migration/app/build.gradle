@@ -21,7 +21,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.0'
     defaultConfig {
-        applicationId 'com.example.migration.endpoints.endpointsframeworksmigrationexample'
+        applicationId 'com.example.migration.endpoints.app'
         minSdkVersion 25
         targetSdkVersion 26
         versionCode 1

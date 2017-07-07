@@ -1,4 +1,4 @@
-package com.example.migration.endpoints.endpointsframeworksmigrationexample;
+package com.example.migration.endpoints.app;
 
 // Copyright 2017 Google Inc.
 // 

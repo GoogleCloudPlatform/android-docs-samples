@@ -20,7 +20,7 @@ set -xe
 # Update YOUR-PROJECT-ID with project id version
 sed -i'.bak' \
     -e "s/YOUR-PROJECT-ID/${GOOGLE_VERSION_ID}-dot-${GOOGLE_PROJECT_ID}/g" \
-    app/src/main/java/com/example/migration/endpoints/endpointsframeworksmigrationexample/MainActivity.java
+    app/src/main/java/com/example/migration/endpoints/app/MainActivity.java
 
 # Deploy backend
 gradle backend:appengineDeploy \

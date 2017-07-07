@@ -20,9 +20,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        /* [START deprecated_plugins]
+        /* [START legacy_plugins]
         classpath 'com.google.appengine:gradle-appengine-plugin:1.9.53'
-        [END deprecated_plugins] */
+        [END legacy_plugins] */
 
         // [START migration_plugins]
         classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:+'
@@ -37,9 +37,10 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'war'
-/* [START deprecated_apply]
+
+/* [START legacy_apply]
 apply plugin: 'appengine'
-[END deprecated_apply] */
+[END legacy_apply] */
 
 // [START migration_apply]
 apply plugin: 'com.google.cloud.tools.appengine'
@@ -50,11 +51,11 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
-    /* [START deprecated_dependencies]
+    /* [START legacy_dependencies]
     appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.53'
     compile 'com.google.appengine:appengine-endpoints:1.9.53'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.53'
-    [END deprecated_dependencies] */
+    [END legacy_dependencies] */
 
     // [START migration_dependencies]
     compile 'com.google.endpoints:endpoints-framework:+'
@@ -75,7 +76,7 @@ appengine {  // App Engine tasks configuration
     }
 }
 
-/* [START deprecated_appengine_configuration]
+/* [START legacy_appengine_configuration]
 appengine {
     downloadSdk = true
     appcfg {
@@ -86,5 +87,5 @@ appengine {
         getDiscoveryDocsOnBuild = true
     }
 }
-[END deprecated_appengine_configuration] */
+[END legacy_appengine_configuration] */
 

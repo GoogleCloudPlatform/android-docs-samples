@@ -62,9 +62,9 @@ dependencies {
 
 
 
-    /* [START deprecated_dependency]
+    /* [START legacy_dependency]
     compile project(path: ':backend', configuration: 'android-endpoints')
-    [END deprecated_dependency] */
+    [END legacy_dependency] */
 
     // [START migration_dependency]
     endpointsServer project(path: ':backend', configuration: 'endpoints')

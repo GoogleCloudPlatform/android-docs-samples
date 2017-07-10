@@ -1,0 +1,94 @@
+// Copyright 2017 Google Inc.
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+//     
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/*
+    In the previous App Engine standard environment Gradle plugin
+    `gradle-appengine-plugin`, a user was able to generate an API
+    Discovery Document and now is generated using the plugin
+    `endpoints-framework-gradle-plugin` in group `com.google.cloud.tools`.
+
+    The following section represents how the new  plugins
+    are applied for Cloud Endpoints Frameworks 2.0 projects.
+
+    The `endpoints-framework-gradle-plugin` provides two plugins to apply given
+    a specific scenario Cloud Endpoints Frameworks 2.0 client-side and
+    server-side projects.
+
+    Client-side - com.google.cloud.tools.endpoints-framework-client
+    Server-side - com.google.cloud.tools.endpoints-framework-server
+
+    This build script uses `com.google.cloud.tools.endpoints-framework-client` because it
+    is the client-side of this Cloud Endpoints Frameworks 2.0 project.
+*/
+
+// [START apply_endpoints_plugin_client]
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
+// [END apply_endpoints_plugin_client]
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.0'
+    defaultConfig {
+        applicationId 'com.example.migration.endpoints.app'
+        minSdkVersion 25
+        targetSdkVersion 26
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+// [START buildscript_dependencies]
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:+'
+    }
+}
+// [END buildscript_dependencies]
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // androidTestCompile compiles instrumentation tests written using Espresso
+    // used by Firebase Test Lab
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.google.code.findbugs:jsr305:2.0.1'
+    compile 'com.google.http-client:google-http-client-android:1.22.0'
+    testCompile 'junit:junit:4.12'
+
+    /* [START legacy_dependency]
+    compile project(path: ':backend', configuration: 'android-endpoints')
+    [END legacy_dependency] */
+
+    // [START migration_dependency]
+    endpointsServer project(path: ':backend', configuration: 'endpoints')
+    compile 'com.google.api-client:google-api-client:+'
+    // [END migration_dependency]
+}

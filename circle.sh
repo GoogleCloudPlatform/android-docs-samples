@@ -28,7 +28,7 @@ travis_changed_files_parent() {
   (
     set +e
 
-    changed="$(git diff --name-only "${CIRCLE_SHA1}" "${CIRCLE_BRANCH}")"
+    changed="$(git diff --name-only "${CIRCLE_SHA1}" master)"
     if [ $? -ne 0 ]; then
       # Fall back to git head
       changed="$(git diff --name-only "$(git rev-parse HEAD)" "${CIRCLE_BRANCH}")"
@@ -46,21 +46,27 @@ travis_changed_files_parent() {
       #    next pass.
       sed -e 'N;s/^\(.*\).*\n\1.*$/\1\n\1/;D')"
 
-    while [ ! -z "$prefix" ] && [ ! -r "$prefix/build.gradle" ] && [ "${prefix%/*}" != "$prefix" ]; do
+    while [ ! -z "$prefix" ] && [ ! -r "$prefix/build.gradle" ] && [ ! -r "$prefix/jenkins.sh" ] && [ "${prefix%/*}" != "$prefix" ]; do
       prefix="${prefix%/*}"
     done
 
-    [ -r "$prefix/build.gradle" ] || return 0
+    [ -r "$prefix/build.gradle" ] || [ -r "$prefix/jenkins.sh" ] || return 0
 
     echo "$prefix"
   )
 }
 
-common_travis_dir="$(travis_changed_files_parent)"
+common_changed_dir="$(travis_changed_files_parent)"
 
-echo "${common_travis_dir}"
+[ -z "${common_changed_dir}" ] || pushd "${common_travis_dir}"
+
+
+
+[ -z "${common_changed_dir}" ] || popd
+
 
 # Check that all shell scripts in this repo (including this one) pass the
 # Shell Check linter.
 shellcheck ./**/*.sh
+
 

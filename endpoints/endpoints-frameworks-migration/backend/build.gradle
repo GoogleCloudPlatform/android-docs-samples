@@ -1,11 +1,11 @@
 // Copyright 2017 Google Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-//     
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,8 +36,8 @@ buildscript {
         [END legacy_plugins] */
 
         // [START migration_plugins]
-        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:+'
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:+'
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.2'
         // [END migration_plugins]
     }
 }
@@ -91,7 +91,7 @@ dependencies {
     [END legacy_dependencies] */
 
     // [START migration_dependencies]
-    compile 'com.google.endpoints:endpoints-framework:+'
+    compile 'com.google.endpoints:endpoints-framework:2.0.7'
     compile 'javax.inject:javax.inject:1'
     // [END migration_dependencies]
 

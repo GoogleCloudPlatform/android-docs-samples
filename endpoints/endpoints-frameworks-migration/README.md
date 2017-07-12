@@ -12,7 +12,7 @@ Migrated sections with related comments are located in the following files:
 
 ## Setup
 
-This sample is an Android Studio project. 
+This sample is an Android Studio project.
 
 * [Install the Cloud SDK](https://cloud.google.com/sdk/docs/).
 * [Initialize the Cloud SDK](https://cloud.google.com/sdk/docs/initializing)

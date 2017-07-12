@@ -29,6 +29,7 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'war'
+// Deprecated Apply App Engine plugin dependency
 apply plugin: 'appengine'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
@@ -45,20 +46,16 @@ dependencies {
     compile 'javax.servlet:servlet-api:2.5'
 }
 
-// TODO: Update version deployed using deprecated appengine plugin
-appengine {  // App Engine tasks configuration
-    deploy {   // deploy configuration
-        version = findProperty("appengine.deploy.version")
-        println version
-        def promoteProp = findProperty("appengine.deploy.promote")
-        if (promoteProp != null) {
-            promote = new Boolean(promoteProp)
-        }
-    }
-}
-
-appengine {
+appengine { // App Engine Tasks configuration
     downloadSdk = true
+    deploy {
+      version = findProperty("appengine.deploy.version")
+      println version
+      def promoteProp = findProperty("appengine.deploy.promote")
+      if (promoteProp != null) {
+        promote = new Boolean(promoteProp)
+      }
+    }
     appcfg {
         oauth2 = true
     }

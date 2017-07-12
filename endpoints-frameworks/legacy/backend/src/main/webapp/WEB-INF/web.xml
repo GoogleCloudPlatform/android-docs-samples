@@ -16,15 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+<!-- [START web_xml] -->
     <!--
       In Cloud Endpoints Frameworks 2.0, the servlet-class has changed
       from `SystemServiceServlet` to `EndpointsServlet`.
 
       The URL pattern has also been updated from `/_ah/spi/*` to `/_ah/api/*`.
     -->
-    <!-- Endpoints Frameworks 1.0 section -->
-    <!--
-    [START appengine-endpoints]
     <servlet>
         <servlet-name>SystemServiceServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
@@ -41,28 +39,9 @@ limitations under the License.
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
-    [END appengine-endpoints]
-    -->
-    <!-- End of Endpoints Frameworks 1.0 -->
-
-    <!-- Endpoints Frameworks 2.0 -->
-    <!-- [START endpoints-frameworks] -->
-    <servlet>
-        <servlet-name>EndpointsServlet</servlet-name>
-        <servlet-class>com.google.api.server.spi.EndpointsServlet</servlet-class>
-        <init-param>
-            <param-name>services</param-name>
-            <param-value>com.example.migration.endpoints.backend.MyEndpoint</param-value>
-        </init-param>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>EndpointsServlet</servlet-name>
-        <url-pattern>/_ah/api/*</url-pattern>
-    </servlet-mapping>
-    <!-- [END endpoints-frameworks] -->
-    <!-- End of Endpoints Frameworks 2.0 -->
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+<!-- [END web_xml] -->
 </web-app>

@@ -31,11 +31,11 @@
     This build script uses `com.google.cloud.tools.endpoints-framework-client` because it
     is the client-side of this Cloud Endpoints Frameworks 2.0 project.
 */
-
-// [START apply_endpoints_plugin_client]
+// [START gradle_script]
 apply plugin: 'com.android.application'
+
+// Apply the new Endpoints Framework client plugin
 apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
-// [END apply_endpoints_plugin_client]
 
 android {
     compileSdkVersion 26
@@ -57,16 +57,15 @@ android {
     }
 }
 
-// [START buildscript_dependencies]
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
+        // Add the new Endpoints Framework plugin dependencies
         classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
     }
 }
-// [END buildscript_dependencies]
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -80,15 +79,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     compile 'com.google.code.findbugs:jsr305:2.0.1'
-    compile 'com.google.http-client:google-http-client-android:1.22.0'
     testCompile 'junit:junit:4.12'
 
-    /* [START legacy_dependency]
-    compile project(path: ':backend', configuration: 'android-endpoints')
-    [END legacy_dependency] */
-
-    // [START migration_dependency]
+    // Endpoints Framework v2 migration
     endpointsServer project(path: ':backend', configuration: 'endpoints')
     compile 'com.google.api-client:google-api-client:1.22.0'
-    // [END migration_dependency]
+    compile 'com.google.http-client:google-http-client-android:1.22.0'
 }
+// [END gradle_script]

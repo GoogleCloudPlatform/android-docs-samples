@@ -12,15 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// If you would like more information on the gradle-appengine-plugin please refer to the github page
-// https://github.com/GoogleCloudPlatform/gradle-appengine-plugin
-
+// [START gradle_script]
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.53'
+        // Deprecated App Engine plugin dependency
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.54'
     }
 }
 
@@ -36,9 +35,12 @@ sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
-    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.53'
-    compile 'com.google.appengine:appengine-endpoints:1.9.53'
-    compile 'com.google.appengine:appengine-endpoints-deps:1.9.53'
+    // Deprecated App Engine plugin dependency
+    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
+
+    // Legacy Endpoints Framework dependencies
+    compile 'com.google.appengine:appengine-endpoints:1.9.54'
+    compile 'com.google.appengine:appengine-endpoints-deps:1.9.54'
 
     compile 'javax.servlet:servlet-api:2.5'
 }
@@ -65,4 +67,5 @@ appengine {
         getDiscoveryDocsOnBuild = true
     }
 }
+// [END gradle_script]
 

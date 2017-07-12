@@ -13,15 +13,14 @@
 // limitations under the License.
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+// [START gradle_script]
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        // [START migration_dependency]
+        // Include this dependency when using Endpoints Framework v2
         classpath 'com.google.guava:guava:19.0'
-        // [END migration_dependency]
 
         classpath 'com.android.tools.build:gradle:2.3.3'
 
@@ -39,3 +38,4 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+// [END gradle_script]

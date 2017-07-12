@@ -12,26 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
-    In the previous App Engine standard environment Gradle plugin
-    `gradle-appengine-plugin`, a user was able to generate an API
-    Discovery Document and now is generated using the plugin
-    `endpoints-framework-gradle-plugin` in group `com.google.cloud.tools`.
-
-    The following section represents how the new  plugins
-    are applied for Cloud Endpoints Frameworks 2.0 projects.
-
-    The `endpoints-framework-gradle-plugin` provides two plugins to apply given
-    a specific scenario Cloud Endpoints Frameworks 2.0 client-side and
-    server-side projects.
-
-    Client-side - com.google.cloud.tools.endpoints-framework-client
-    Server-side - com.google.cloud.tools.endpoints-framework-server
-
-    This build script uses `com.google.cloud.tools.endpoints-framework-client` because it
-    is the client-side of this Cloud Endpoints Frameworks 2.0 project.
-*/
-
+// [START gradle_script]
 apply plugin: 'com.android.application'
 
 android {
@@ -66,8 +47,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
     compile 'com.google.code.findbugs:jsr305:2.0.1'
-    compile 'com.google.http-client:google-http-client-android:1.22.0'
+    //compile 'com.google.http-client:google-http-client-android:1.22.0'
     testCompile 'junit:junit:4.12'
 
+    // Legacy compile :backend project
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
+// [END gradle_script]
+

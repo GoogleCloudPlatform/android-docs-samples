@@ -25,7 +25,8 @@ sed -i'.bak' \
 # Deploy backend
 gradle backend:appengineUpdate \
     -Pappengine.deploy.application=${GOOGLE_PROJECT_ID} \
-    -Pappengine.deploy.version="${GOOGLE_VERSION_ID}"
+    -Pappengine.deploy.version="${GOOGLE_VERSION_ID}" \
+    --debug
 
 # Generate apk from "app" module
 gradle app:assembleAndroidTest

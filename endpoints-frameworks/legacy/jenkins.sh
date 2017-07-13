@@ -24,7 +24,7 @@ sed -i'.bak' \
 
 # Deploy backend
 gradle backend:appengineUpdate \
-    -Pappengine.deploy.promote=false \
+    -Pappengine.deploy.application=${GOOGLE_PROJECT_ID} \
     -Pappengine.deploy.version="${GOOGLE_VERSION_ID}"
 
 # Generate apk from "app" module

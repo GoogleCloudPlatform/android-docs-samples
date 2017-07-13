@@ -51,15 +51,15 @@ appengine { // App Engine Tasks configuration
     appcfg {
         oauth2 = true
         def application = findProperty("appengine.deploy.application")
-        println "Project ID" + application
+        println application
 
         def version = findProperty("appengine.deploy.version")
-        println "Version ID" + version
+        println version
 
-        def adc = findProperty("appengine.deploy.adc")
+        def serviceAccount = findProperty("appengine.deploy.serviceAccount")
 
         extraOptions = ["--application=" + application, "--version=" + version,
-            '--service_account_json_key_file=' + adc]
+            '--service_account_json_key_file=' + serviceAccount]
     }
     endpoints {
         getClientLibsOnBuild = true

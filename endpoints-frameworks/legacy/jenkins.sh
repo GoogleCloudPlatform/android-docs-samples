@@ -23,7 +23,7 @@ sed -i'.bak' \
     app/src/main/java/com/example/migration/endpoints/app/MainActivity.java
 
 # Deploy backend
-gradle backend:appengineDeploy \
+gradle backend:appengineUpdate \
     -Pappengine.deploy.promote=false \
     -Pappengine.deploy.version="${GOOGLE_VERSION_ID}"
 

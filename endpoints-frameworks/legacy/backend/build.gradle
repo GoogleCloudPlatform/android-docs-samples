@@ -50,14 +50,13 @@ appengine { // App Engine Tasks configuration
     downloadSdk = true
     appcfg {
         oauth2 = true
-        app {
-            version = findProperty("appengine.deploy.version")
-            println version
-            def promoteProp = findProperty("appengine.deploy.promote")
-            if (promoteProp != null) {
-                promote = new Boolean(promoteProp)
-            }
-        }
+        def application = findProperty("appengine.deploy.application")
+        println "Project ID" + application
+
+        def version = findProperty("appengine.deploy.version")
+        println "Version ID" + version
+
+        extraOptions = ["--application=" + application, "--version=" + version]
     }
     endpoints {
         getClientLibsOnBuild = true

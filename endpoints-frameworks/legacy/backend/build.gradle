@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        // Deprecated App Engine plugin dependency
+        // LEGACY: Deprecated App Engine plugin dependency
         classpath 'com.google.appengine:gradle-appengine-plugin:1.9.54'
     }
 }
@@ -29,33 +29,33 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'war'
-// Deprecated Apply App Engine plugin dependency
+
+// LEGACY: Deprecated Apply App Engine plugin dependency
 apply plugin: 'appengine'
 
 sourceCompatibility = JavaVersion.VERSION_1_7
 targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
-    // Deprecated App Engine plugin dependency
+    // LEGACY: Deprecated App Engine plugin dependency
     appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.54'
 
-    // Legacy Endpoints Framework dependencies
+    // LEGACY: Legacy Endpoints Framework dependencies
     compile 'com.google.appengine:appengine-endpoints:1.9.54'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.54'
 
     compile 'javax.servlet:servlet-api:2.5'
 }
 
-appengine { // App Engine Tasks configuration
+appengine { // LEGACY: Deprecated App Engine plugin Tasks configuration
     downloadSdk = true
     appcfg {
         oauth2 = true
+
+        // extraOptions is used for acceptance test and
+        // is not required.
         def application = findProperty("appengine.deploy.application")
-        println application
-
         def version = findProperty("appengine.deploy.version")
-        println version
-
         def serviceAccount = findProperty("appengine.deploy.serviceAccount")
 
         extraOptions = ["--application=" + application, "--version=" + version,

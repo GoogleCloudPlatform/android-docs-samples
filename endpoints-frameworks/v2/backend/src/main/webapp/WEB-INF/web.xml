@@ -17,16 +17,20 @@ limitations under the License.
 -->
 <!-- [START web_xml] -->
     <servlet>
+        <!-- V2: Start of v2 section -->
         <servlet-name>EndpointsServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.EndpointsServlet</servlet-class>
+        <!-- V2: End of v2 section -->
         <init-param>
             <param-name>services</param-name>
             <param-value>com.example.migration.endpoints.backend.MyEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
+        <!-- V2: Start of v2 section -->
         <servlet-name>EndpointsServlet</servlet-name>
         <url-pattern>/_ah/api/*</url-pattern>
+        <!-- V2: End of v2 section -->
     </servlet-mapping>
 <!-- [END web_xml] -->
 

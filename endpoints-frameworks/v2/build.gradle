@@ -19,15 +19,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        // Include this dependency when using Endpoints Framework v2
+        // V2: Include this dependency when using Endpoints Framework v2
         classpath 'com.google.guava:guava:19.0'
 
         classpath 'com.android.tools.build:gradle:2.3.3'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
+// [END gradle_script]
 
 allprojects {
     repositories {
@@ -38,4 +36,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-// [END gradle_script]

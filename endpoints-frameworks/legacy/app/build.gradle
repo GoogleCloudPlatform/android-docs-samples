@@ -51,7 +51,7 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.22.0'
     testCompile 'junit:junit:4.12'
 
-    // Legacy compile :backend project
+    // LEGACY: Legacy compile :backend project
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
 // [END gradle_script]

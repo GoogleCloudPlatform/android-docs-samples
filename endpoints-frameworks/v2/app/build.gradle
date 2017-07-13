@@ -12,30 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*
-    In the previous App Engine standard environment Gradle plugin
-    `gradle-appengine-plugin`, a user was able to generate an API
-    Discovery Document and now is generated using the plugin
-    `endpoints-framework-gradle-plugin` in group `com.google.cloud.tools`.
-
-    The following section represents how the new  plugins
-    are applied for Cloud Endpoints Frameworks 2.0 projects.
-
-    The `endpoints-framework-gradle-plugin` provides two plugins to apply given
-    a specific scenario Cloud Endpoints Frameworks 2.0 client-side and
-    server-side projects.
-
-    Client-side - com.google.cloud.tools.endpoints-framework-client
-    Server-side - com.google.cloud.tools.endpoints-framework-server
-
-    This build script uses `com.google.cloud.tools.endpoints-framework-client` because it
-    is the client-side of this Cloud Endpoints Frameworks 2.0 project.
-*/
 // [START gradle_script]
 apply plugin: 'com.android.application'
 
-// Apply the new Endpoints Framework client plugin
+// V2: Apply the new Endpoints Framework client plugin
 apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // V2: Add the new Endpoints Framework plugin dependencies
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
+    }
+}
 
 android {
     compileSdkVersion 26
@@ -57,16 +48,6 @@ android {
     }
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        // Add the new Endpoints Framework plugin dependencies
-        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
-    }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -81,7 +62,7 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:2.0.1'
     testCompile 'junit:junit:4.12'
 
-    // Endpoints Framework v2 migration
+    // V2: Endpoints Framework v2 migration
     endpointsServer project(path: ':backend', configuration: 'endpoints')
     compile 'com.google.api-client:google-api-client:1.22.0'
     compile 'com.google.http-client:google-http-client-android:1.22.0'

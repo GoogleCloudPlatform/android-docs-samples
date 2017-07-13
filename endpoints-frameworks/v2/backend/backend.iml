@@ -31,25 +31,9 @@ limitations under the License.
       <configuration>
         <option name="HTTP_ADDRESS" value="localhost" />
         <option name="HTTP_PORT" value="8080" />
-
-        <!--
-         Using Cloud Endpoints Frameworks 2.0 tooling has changed the WAR file path.
-         In Cloud Endpoints Frameworks 1.0 tooling expect the WAR to be located in
-         "$MODULE_DIR$/build/exploded-app" (legacy_option) and has now changed
-         to "$MODULE_DIR$/build/exploded-backend" (migration_option).
-        -->
-
-        <!--
-        [START legacy_option]
-        <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-app" />
-        [END legacy_option] -->
-
-        <!-- [START migration_option] -->
         <option name="WAR_DIR" value="$MODULE_DIR$/build/exploded-backend" />
-        <!-- [END migration_option] -->
-
         <option name="WEB_APP_DIR" value="$MODULE_DIR$/src/main/webapp" />
-        <option name="APPENGINE_SDKROOT" value="$USER_HOME$/.gradle/appengine-sdk/appengine-java-sdk-1.9.42" />
+        <option name="APPENGINE_SDKROOT" value="$USER_HOME$/.gradle/appengine-sdk/appengine-java-sdk-1.9.54" />
       </configuration>
     </facet>
   </component>

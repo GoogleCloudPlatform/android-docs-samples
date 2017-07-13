@@ -17,31 +17,24 @@ limitations under the License.
 -->
 
 <!-- [START web_xml] -->
-    <!--
-      In Cloud Endpoints Frameworks 2.0, the servlet-class has changed
-      from `SystemServiceServlet` to `EndpointsServlet`.
-
-      The URL pattern has also been updated from `/_ah/spi/*` to `/_ah/api/*`.
-    -->
     <servlet>
+        <!-- LEGACY: Start of Legacy section -->
         <servlet-name>SystemServiceServlet</servlet-name>
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
+        <!-- LEGACY: End of Legacy section -->
         <init-param>
             <param-name>services</param-name>
             <param-value>com.example.migration.endpoints.backend.MyEndpoint</param-value>
         </init-param>
-        <init-param>
-            <param-name>restricted</param-name>
-            <param-value>false</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
+        <!-- LEGACY: Start of legacy section -->
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
+        <!-- LEGACY: End of legacy section -->
     </servlet-mapping>
-
+<!-- [END web_xml] -->
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
-<!-- [END web_xml] -->
 </web-app>

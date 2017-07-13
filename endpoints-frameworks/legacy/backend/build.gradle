@@ -56,7 +56,8 @@ appengine { // App Engine Tasks configuration
         def version = findProperty("appengine.deploy.version")
         println "Version ID" + version
 
-        extraOptions = ["--application=" + application, "--version=" + version]
+        extraOptions = ["--application=" + application, "--version=" + version,
+            '--use_google_application_default_credentials']
     }
     endpoints {
         getClientLibsOnBuild = true

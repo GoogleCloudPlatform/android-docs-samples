@@ -1,14 +1,7 @@
-# Android Studio Cloud Endpoints Migration Example
+# Android Studio Cloud Endpoints v2.0 Example
 
 This sample is an example of a migrated [Android Studio Cloud Endpoints backend](https://cloud.google.com/tools/android-studio/app_engine/add_module)
-using [Google Cloud Endpoints Frameworks 2.0](https://cloud.google.com/endpoints/docs).
-
-Migrated sections with related comments are located in the following files:
-
-* [build.gradle](build.gradle)
-* [app/build.gradle](app/build.gradle)
-* [backend/build.gradle](backend/build.gradle)
-* [backend/backend.iml](backend/build.gradle)
+using [Google Cloud Endpoints Frameworks 2.0](https://cloud.google.com/endpoints/docs/frameworks/java/about-cloud-endpoints-frameworks).
 
 ## Setup
 
@@ -27,4 +20,4 @@ of your Cloud Endpoints Frameworks project.
 This sample is tested using an instrumentation test on [Firebase Test Lab](https://firebase.google.com/docs/test-lab/)
 to verify the end-to-end communication between an Android app and
 a Cloud Endpoints Frameworks project. The test is initiated by
-the `jenkins.sh` script.
+the `acceptance_test.sh` script.

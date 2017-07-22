@@ -1,5 +1,7 @@
 ## Android Docs Samples
 
+[![CircleCI](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples.svg?style=svg)](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples)
+
 This is a repository that contains Android code snippets on Google Cloud
 Platform Documentation.
 

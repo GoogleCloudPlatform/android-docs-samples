@@ -30,7 +30,7 @@ buildscript {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId 'com.example.migration.endpoints.app'
         minSdkVersion 25

@@ -24,7 +24,7 @@ Get the latest sample code from GitHub using Git or download the repository as a
 
 *  [Using the Google Cloud Speech API in an Android app](speech/Speech)
 *  [Using the Google Cloud Natural Language API in an Android app](nl/Language)
-*  [Endpoints Frameworks Android apps](endpoints/endpoints-frameworks)
+*  [Endpoints Frameworks Android apps](endpoints-frameworks)
 
 ## Contributing changes
 

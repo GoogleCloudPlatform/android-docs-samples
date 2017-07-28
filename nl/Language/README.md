@@ -33,3 +33,19 @@ Again, ***you should not do this in your production app.***
 
 See the [Cloud Platform Auth Guide](https://cloud.google.com/docs/authentication#developer_workflow)
 for more information.
+
+### Test
+
+Before running tests update the following environment variable with the service
+account:
+
+    GOOGLE_APPLICATION=service-account.json
+
+This environment variable will be used to update the service account used here
+`app/src/main/res/raw/credential.json`.
+
+Run tests by using:
+
+    gradle test
+
+

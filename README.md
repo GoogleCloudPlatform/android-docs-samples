@@ -1,5 +1,7 @@
 ## Android Docs Samples
 
+[![CircleCI](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples.svg?style=svg)](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples)
+
 This is a repository that contains Android code snippets on Google Cloud
 Platform Documentation.
 
@@ -22,7 +24,7 @@ Get the latest sample code from GitHub using Git or download the repository as a
 
 *  [Using the Google Cloud Speech API in an Android app](speech/Speech)
 *  [Using the Google Cloud Natural Language API in an Android app](nl/Language)
-*  [Migrating to Cloud Endpoints 1.0 Android projects to Endpoints 2.0](endpoints/endpoints-frameworks-migration)
+*  [Endpoints Frameworks Android apps](endpoints/endpoints-frameworks)
 
 ## Contributing changes
 

@@ -123,11 +123,11 @@ dependencies {
 }
 
 task copySecretKey(type: Copy) {
-  def File secretKey = file "$System.env.GOOGLE_APPLICATION_CREDENTIALS"
-  from secretKey.getParent()
-  include secretKey.getName() 
-  into 'src/main/res/raw'
-  rename secretKey.getName(), "credential.json"
+    def File secretKey = file "$System.env.GOOGLE_APPLICATION_CREDENTIALS"
+    from secretKey.getParent()
+    include secretKey.getName()
+    into 'src/main/res/raw'
+    rename secretKey.getName(), "credential.json"
 }
 preBuild.dependsOn(copySecretKey)
 

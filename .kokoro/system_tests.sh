@@ -73,7 +73,7 @@ gcloud -q config set project ${GOOGLE_PROJECT_ID}
 gcloud info
 
 ## BEGIN TESTS ##
-bash run-tests.sh
+bash github/android-docs-samples/run-tests.sh
 ## END TESTS ##
 
 

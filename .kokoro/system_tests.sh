@@ -18,11 +18,10 @@ export GOOGLE_PROJECT_ID=android-docs-samples
 export GOOGLE_VERSION_ID="jenkins-${BUILD_ID}"
 export CLOUDSDK_ACTIVE_CONFIG_NAME=android-docs-samples
 
-echo 'deb http://ftp.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/backports.list
-apt-get update && apt-get -y install unzip
+apt-get update && apt-get -y install unzip wget
 
 # Install Open JDK 8
-apt-get install -t jessie-backports -yq openjdk-8-jdk
+apt-get install -yq openjdk-8-jdk
 update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
 # Install gcloud

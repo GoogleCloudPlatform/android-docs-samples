@@ -13,17 +13,6 @@
 // limitations under the License.
 
 // [START gradle_script]
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        // V2: Add the new App Engine and Endpoints Frameworks plugin dependencies
-        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
-        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.2'
-    }
-}
-
 repositories {
     jcenter();
 }
@@ -40,7 +29,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 dependencies {
     // V2: Endpoints Framework v2 migration
-    compile 'com.google.endpoints:endpoints-framework:2.0.7'
+    compile 'com.google.endpoints:endpoints-framework:2.0.8'
 
     compile 'javax.inject:javax.inject:1'
     compile 'javax.servlet:servlet-api:2.5'

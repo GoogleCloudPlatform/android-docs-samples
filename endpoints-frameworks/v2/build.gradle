@@ -23,6 +23,10 @@ buildscript {
         classpath 'com.google.guava:guava:19.0'
 
         classpath 'com.android.tools.build:gradle:2.3.3'
+
+        // V2: Include Appengine and Endpoints Frameworks plugins
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.2'
+        classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.3'
     }
 }
 // [END gradle_script]

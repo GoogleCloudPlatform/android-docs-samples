@@ -23,8 +23,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        // V2: Add the new Endpoints Framework plugin dependencies
-        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
     }
 }
 

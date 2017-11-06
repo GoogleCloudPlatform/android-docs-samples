@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.auth.Credentials;
@@ -33,31 +34,28 @@ import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.android.dialogflow.BuildConfig;
 import com.google.cloud.android.dialogflow.R;
-import com.google.cloud.conversation.v1alpha.AudioEncoding;
-import com.google.cloud.conversation.v1alpha.ConversationServiceGrpc;
-import com.google.cloud.conversation.v1alpha.DetectIntentRequest;
-import com.google.cloud.conversation.v1alpha.DetectIntentResponse;
-import com.google.cloud.conversation.v1alpha.InputAudioConfig;
-import com.google.cloud.conversation.v1alpha.QueryInput;
-import com.google.cloud.conversation.v1alpha.QueryResult;
-import com.google.cloud.conversation.v1alpha.StreamingDetectIntentRequest;
-import com.google.cloud.conversation.v1alpha.StreamingDetectIntentResponse;
-import com.google.cloud.conversation.v1alpha.StreamingInputAudioConfig;
-import com.google.cloud.conversation.v1alpha.StreamingQueryInput;
-import com.google.cloud.conversation.v1alpha.StreamingQueryParameters;
-import com.google.cloud.conversation.v1alpha.StreamingRecognitionResult;
-import com.google.cloud.conversation.v1alpha.TextInput;
+import com.google.cloud.dialogflow.v2beta1.AudioEncoding;
+import com.google.cloud.dialogflow.v2beta1.DetectIntentRequest;
+import com.google.cloud.dialogflow.v2beta1.DetectIntentResponse;
+import com.google.cloud.dialogflow.v2beta1.InputAudioConfig;
+import com.google.cloud.dialogflow.v2beta1.QueryInput;
+import com.google.cloud.dialogflow.v2beta1.QueryResult;
+import com.google.cloud.dialogflow.v2beta1.SessionsGrpc;
+import com.google.cloud.dialogflow.v2beta1.StreamingDetectIntentRequest;
+import com.google.cloud.dialogflow.v2beta1.StreamingDetectIntentResponse;
+import com.google.cloud.dialogflow.v2beta1.StreamingRecognitionResult;
+import com.google.cloud.dialogflow.v2beta1.TextInput;
 import com.google.protobuf.ByteString;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -122,15 +120,17 @@ public class DialogflowService extends Service {
 
     private static final List<String> SCOPE =
             Collections.singletonList("https://www.googleapis.com/auth/cloud-platform");
-    private static final String HOSTNAME = "conversation.googleapis.com";
+    private static final String HOSTNAME = "dialogflow.googleapis.com";
     private static final int PORT = 443;
 
-    /** The unique ID for this conversation; this should be changed as the session changes. */
-    private static final int SESSION_ID = 1234567;
+    /**
+     * The unique name for this session; this should be changed depending on the user for example.
+     */
+    private static final String SESSION_NAME = "sample-session";
 
-    private final ConversationBinder mBinder = new ConversationBinder();
+    private final DialogflowBinder mBinder = new DialogflowBinder();
 
-    private ConversationServiceGrpc.ConversationServiceStub mApi;
+    private SessionsGrpc.SessionsStub mApi;
 
     private final ArrayList<Listener> mListeners = new ArrayList<>();
 
@@ -153,7 +153,7 @@ public class DialogflowService extends Service {
             if (mHandler == null) {
                 return;
             }
-            final String text = detectIntentResponse.getQueryResult().getFulfillment().getText();
+            final String text = detectIntentResponse.getQueryResult().getFulfillmentText();
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -196,14 +196,16 @@ public class DialogflowService extends Service {
                 });
             }
             final QueryResult queryResult = response.getQueryResult();
-            if (queryResult != null && queryResult.hasIntent()) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        dispatchNewUtterance(new Utterance(Utterance.INCOMING,
-                                queryResult.getFulfillment().getText()));
-                    }
-                });
+            if (queryResult != null) {
+                final String fulfillment = queryResult.getFulfillmentText();
+                if (!TextUtils.isEmpty(fulfillment)) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            dispatchNewUtterance(new Utterance(Utterance.INCOMING, fulfillment));
+                        }
+                    });
+                }
             }
         }
 
@@ -228,7 +230,7 @@ public class DialogflowService extends Service {
     private StreamObserver<StreamingDetectIntentRequest> mRequestObserver;
 
     public static DialogflowService from(IBinder binder) {
-        return ((ConversationBinder) binder).getService();
+        return ((DialogflowBinder) binder).getService();
     }
 
     @Override
@@ -271,8 +273,7 @@ public class DialogflowService extends Service {
         }
         dispatchNewUtterance(new Utterance(Utterance.OUTGOING, text));
         mApi.detectIntent(DetectIntentRequest.newBuilder()
-                .setSession(createSessionName(BuildConfig.PROJECT_NAME,
-                        BuildConfig.AGENT_NAME, SESSION_ID))
+                .setSession(createSession(BuildConfig.PROJECT_NAME, SESSION_NAME))
                 .setQueryInput(QueryInput.newBuilder()
                         .setText(TextInput.newBuilder()
                                 .setLanguageCode(BuildConfig.LANGUAGE_CODE)
@@ -287,15 +288,12 @@ public class DialogflowService extends Service {
         }
         mRequestObserver = mApi.streamingDetectIntent(mVoiceResponseObserver);
         mRequestObserver.onNext(StreamingDetectIntentRequest.newBuilder()
-                .setQueryParams(StreamingQueryParameters.newBuilder()
-                        .setSession(createSessionName(BuildConfig.PROJECT_NAME,
-                                BuildConfig.AGENT_NAME, SESSION_ID)))
-                .setQueryInput(StreamingQueryInput.newBuilder()
-                        .setAudioConfig(StreamingInputAudioConfig.newBuilder()
-                                .setConfig(InputAudioConfig.newBuilder()
-                                        .setAudioEncoding(AudioEncoding.AUDIO_ENCODING_LINEAR16)
-                                        .setLanguageCode(BuildConfig.LANGUAGE_CODE)
-                                        .setSampleRateHertz(sampleRate))))
+                .setSession(createSession(BuildConfig.PROJECT_NAME, SESSION_NAME))
+                .setQueryInput(QueryInput.newBuilder()
+                        .setAudioConfig(InputAudioConfig.newBuilder()
+                                .setAudioEncoding(AudioEncoding.AUDIO_ENCODING_LINEAR_16)
+                                .setLanguageCode(BuildConfig.LANGUAGE_CODE)
+                                .setSampleRateHertz(sampleRate)))
                 .build());
     }
 
@@ -321,7 +319,7 @@ public class DialogflowService extends Service {
             return;
         }
         mHandler = new Handler();
-        mAccessTokenTask = new AccessTokenTask();
+        mAccessTokenTask = new AccessTokenTask(this);
         mAccessTokenTask.execute();
     }
 
@@ -360,11 +358,11 @@ public class DialogflowService extends Service {
         }
     }
 
-    private String createSessionName(String project, String agent, int id) {
-        return String.format(Locale.US, "projects/%s/agents/%s/sessions/%d", project, agent, id);
+    private String createSession(String projectId, String sessionName) {
+        return "projects/" + projectId + "/agent/sessions/" + sessionName;
     }
 
-    private class ConversationBinder extends Binder {
+    private class DialogflowBinder extends Binder {
 
         DialogflowService getService() {
             return DialogflowService.this;
@@ -372,11 +370,21 @@ public class DialogflowService extends Service {
 
     }
 
-    private class AccessTokenTask extends AsyncTask<Void, Void, AccessToken> {
+    private static class AccessTokenTask extends AsyncTask<Void, Void, AccessToken> {
+
+        private final WeakReference<DialogflowService> mServiceRef;
+
+        AccessTokenTask(DialogflowService service) {
+            mServiceRef = new WeakReference<>(service);
+        }
 
         @Override
         protected AccessToken doInBackground(Void... voids) {
-            final SharedPreferences prefs = getApplication()
+            final DialogflowService service = mServiceRef.get();
+            if (service == null) {
+                return null;
+            }
+            final SharedPreferences prefs = service.getApplication()
                     .getSharedPreferences(PREFS, Context.MODE_PRIVATE);
             final String tokenValue = prefs.getString(PREF_ACCESS_TOKEN_VALUE, null);
             long expirationTime = prefs.getLong(PREF_ACCESS_TOKEN_EXPIRATION_TIME, -1);
@@ -393,7 +401,7 @@ public class DialogflowService extends Service {
             // folder of this client app. You should never do this in your app. Instead, store
             // the file in your server and obtain an access token from there.
             // *******************
-            final InputStream stream = getApplication().getResources()
+            final InputStream stream = service.getApplication().getResources()
                     .openRawResource(R.raw.credential);
             try {
                 final GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
@@ -413,18 +421,23 @@ public class DialogflowService extends Service {
 
         @Override
         protected void onPostExecute(AccessToken accessToken) {
+            final DialogflowService service = mServiceRef.get();
+            if (service == null) {
+                return;
+            }
             final ManagedChannel channel = new OkHttpChannelProvider()
                     .builderForAddress(HOSTNAME, PORT)
                     .nameResolverFactory(new DnsNameResolverProvider())
-                    .intercept(new GoogleCredentialsInterceptor(new GoogleCredentials(accessToken)
-                            .createScoped(SCOPE)))
+                    .intercept(new GoogleCredentialsInterceptor(
+                            GoogleCredentials.create(accessToken)
+                                    .createScoped(SCOPE)))
                     .build();
-            mApi = ConversationServiceGrpc.newStub(channel);
-            dispatchApiReady();
+            service.mApi = SessionsGrpc.newStub(channel);
+            service.dispatchApiReady();
 
             // Schedule access token refresh before it expires
-            if (mHandler != null) {
-                mHandler.postDelayed(mFetchAccessTokenRunnable,
+            if (service.mHandler != null) {
+                service.mHandler.postDelayed(service.mFetchAccessTokenRunnable,
                         Math.max(accessToken.getExpirationTime().getTime()
                                         - System.currentTimeMillis() - ACCESS_TOKEN_FETCH_MARGIN,
                                 ACCESS_TOKEN_EXPIRATION_TOLERANCE));

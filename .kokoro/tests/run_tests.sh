@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#Fail on Exit
+set -euxo pipefail
+
 export GOOGLE_PROJECT_ID=android-docs-samples
-export GOOGLE_VERSION_ID="jenkins-${BUILD_ID}"
 export CLOUDSDK_ACTIVE_CONFIG_NAME=android-docs-samples
 
 apt-get update && apt-get -y install unzip wget

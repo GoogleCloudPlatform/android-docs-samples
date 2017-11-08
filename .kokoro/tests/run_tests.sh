@@ -20,10 +20,13 @@ set -euxo pipefail
 export GOOGLE_PROJECT_ID=android-docs-samples
 export CLOUDSDK_ACTIVE_CONFIG_NAME=android-docs-samples
 
-apt-get update && apt-get -y install unzip wget
+apt-get -qq update \
+ && apt-get -qq -y upgrade \
+ && apt-get -qq -y install \
+    unzip \
+    wget \
+    openjdk-8-jdk 
 
-# Install Open JDK 8
-apt-get install -yq openjdk-8-jdk
 update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
 # Install gcloud

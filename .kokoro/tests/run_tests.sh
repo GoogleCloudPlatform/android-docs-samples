@@ -17,6 +17,7 @@
 #Fail on Exit
 set -euxo pipefail
 
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-password.txt
 export GOOGLE_PROJECT_ID=android-docs-samples
 export CLOUDSDK_ACTIVE_CONFIG_NAME=android-docs-samples
 

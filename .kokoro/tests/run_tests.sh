@@ -59,7 +59,7 @@ fi
 
 export ANDROID_HOME="${HOME}/android"
 # Install Android SDK, tools, and build tools API 26
-echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager "platforms;android-26" "tools" "build-tools;26.0.0"
+echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager "platforms;android-26" "tools" "build-tools;26.0.1"
 
 export PATH=${HOME}/google-cloud-sdk/bin:${HOME}/appengine-java-sdk/bin:${HOME}/maven/apache-maven/bin:${HOME}/gradle/gradle/bin:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${PATH}
 

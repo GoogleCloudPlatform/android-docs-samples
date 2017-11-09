@@ -4,3 +4,4 @@
 # intellij
 .idea/
 *.iml
+local.properties

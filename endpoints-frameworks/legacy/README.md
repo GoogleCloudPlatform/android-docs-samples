@@ -6,7 +6,7 @@ used to explain migrating to [Google Cloud Endpoints Frameworks 2.0](https://clo
 
 ## Setup
 
-This sample is an Android Studio project.
+This sample is an Android Studio 2.x project.
 
 * [Install the Cloud SDK](https://cloud.google.com/sdk/docs/).
 * [Initialize the Cloud SDK](https://cloud.google.com/sdk/docs/initializing)

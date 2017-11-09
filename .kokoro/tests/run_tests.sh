@@ -14,14 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#Fail on Exit
+set -euxo pipefail
+
+export GOOGLE_APPLICATION_CREDENTIALS=${KOKORO_GFILE_DIR}/secrets-password.txt
 export GOOGLE_PROJECT_ID=android-docs-samples
-export GOOGLE_VERSION_ID="jenkins-${BUILD_ID}"
 export CLOUDSDK_ACTIVE_CONFIG_NAME=android-docs-samples
 
-apt-get update && apt-get -y install unzip wget
+apt-get -qq update \
+ && apt-get -qq -y upgrade \
+ && apt-get -qq -y install \
+    unzip \
+    wget \
+    openjdk-8-jdk 
 
-# Install Open JDK 8
-apt-get install -yq openjdk-8-jdk
 update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
 
 # Install gcloud
@@ -53,7 +59,7 @@ fi
 
 export ANDROID_HOME="${HOME}/android"
 # Install Android SDK, tools, and build tools API 26
-echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager "platforms;android-26" "tools" "build-tools;26.0.0"
+echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager "platforms;android-26" "tools" "build-tools;26.0.1"
 
 export PATH=${HOME}/google-cloud-sdk/bin:${HOME}/appengine-java-sdk/bin:${HOME}/maven/apache-maven/bin:${HOME}/gradle/gradle/bin:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${PATH}
 
@@ -73,7 +79,9 @@ gcloud -q config set project ${GOOGLE_PROJECT_ID}
 gcloud info
 
 ## BEGIN TESTS ##
-bash github/android-docs-samples/run-tests.sh
+pushd github/android-docs-samples
+bash run-tests.sh
+popd
 ## END TESTS ##
 
 

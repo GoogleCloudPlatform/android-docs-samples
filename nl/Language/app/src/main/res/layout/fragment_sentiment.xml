@@ -34,11 +34,11 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/polarity"
+            android:text="@string/score"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
         <TextView
-            android:id="@+id/polarity"
+            android:id="@+id/score"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -47,7 +47,7 @@
             android:padding="@dimen/spacing_small"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textColor="@android:color/white"
-            tools:background="@color/polarity_negative"
+            tools:background="@color/score_negative"
             tools:text="-1"/>
 
         <TextView

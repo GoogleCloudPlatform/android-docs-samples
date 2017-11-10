@@ -1,0 +1,58 @@
+// Copyright 2017 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// [START gradle_script]
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
+    defaultConfig {
+        applicationId 'com.example.migration.endpoints.app'
+        minSdkVersion 25
+        targetSdkVersion 26
+        versionCode 1
+        versionName '1.0'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // androidTestCompile compiles instrumentation tests written using Espresso
+    // used by Firebase Test Lab
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.google.code.findbugs:jsr305:2.0.1'
+    compile 'com.google.http-client:google-http-client-android:1.22.0'
+    compile 'com.google.api-client:google-api-client:+'
+    testCompile 'junit:junit:4.12'
+
+    // LEGACY: Legacy compile :backend project
+    compile project(path: ':backend', configuration: 'android-endpoints')
+}
+// [END gradle_script]
+

@@ -16,7 +16,7 @@
 
 package com.google.cloud.android.language.model;
 
-import com.google.api.services.language.v1beta1.model.Entity;
+import com.google.api.services.language.v1.model.Entity;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

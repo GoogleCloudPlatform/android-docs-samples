@@ -18,14 +18,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
 ext {
-    supportLibraryVersion = '25.3.1'
-    grpcVersion = '1.1.2'
-    protobufVersion = '3.2.0'
+    supportLibraryVersion = '25.4.0'
+    grpcVersion = '1.4.0'
 }
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId "com.google.cloud.android.speech"
@@ -67,14 +66,14 @@ android {
     }
 
     configurations.all {
-        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
         resolutionStrategy.force "com.android.support:support-annotations:$supportLibraryVersion"
     }
 }
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:$protobufVersion"
+        artifact = 'com.google.protobuf:protoc:3.3.0'
     }
     plugins {
         javalite {
@@ -110,10 +109,10 @@ dependencies {
     compile "io.grpc:grpc-protobuf-lite:$grpcVersion"
     compile "io.grpc:grpc-stub:$grpcVersion"
     compile 'javax.annotation:javax.annotation-api:1.2'
-    protobuf "com.google.protobuf:protobuf-java:$protobufVersion"
+    protobuf 'com.google.protobuf:protobuf-java:3.3.1'
 
     // OAuth2 for Google API
-    compile('com.google.auth:google-auth-library-oauth2-http:0.6.0') {
+    compile('com.google.auth:google-auth-library-oauth2-http:0.7.0') {
         exclude module: 'httpclient'
     }
 
@@ -122,3 +121,13 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
+
+task copySecretKey(type: Copy) {
+    def File secretKey = file "$System.env.GOOGLE_APPLICATION_CREDENTIALS"
+    from secretKey.getParent()
+    include secretKey.getName()
+    into 'src/main/res/raw'
+    rename secretKey.getName(), "credential.json"
+}
+preBuild.dependsOn(copySecretKey)
+

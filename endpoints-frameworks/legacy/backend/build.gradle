@@ -1,0 +1,70 @@
+// Copyright 2017 Google Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// [START gradle_script]
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // LEGACY: Deprecated App Engine plugin dependency
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.59'
+    }
+}
+
+repositories {
+    jcenter();
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+// LEGACY: Deprecated Apply App Engine plugin dependency
+apply plugin: 'appengine'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+dependencies {
+    // LEGACY: Deprecated App Engine plugin dependency
+    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.59'
+
+    // LEGACY: Legacy Endpoints Framework dependencies
+    compile 'com.google.appengine:appengine-endpoints:1.9.59'
+    compile 'com.google.appengine:appengine-endpoints-deps:1.9.59'
+
+    compile 'javax.servlet:servlet-api:2.5'
+}
+
+appengine { // LEGACY: Deprecated App Engine plugin Tasks configuration
+    downloadSdk = true
+    appcfg {
+        oauth2 = true
+
+        // extraOptions is used for acceptance test and
+        // is not required.
+        def application = findProperty("appengine.deploy.application")
+        def version = findProperty("appengine.deploy.version")
+        def serviceAccount = findProperty("appengine.deploy.serviceAccount")
+
+        extraOptions = ["--application=" + application, "--version=" + version,
+            '--service_account_json_key_file=' + serviceAccount]
+    }
+    endpoints {
+        getClientLibsOnBuild = true
+        getDiscoveryDocsOnBuild = true
+    }
+}
+// [END gradle_script]
+

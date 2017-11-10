@@ -44,7 +44,7 @@ public class SentimentFragment extends Fragment {
     private int mColorNeutral;
     private int mColorNegative;
 
-    private TextView mPolarity;
+    private TextView mScore;
     private TextView mMagnitude;
 
     @Override
@@ -52,9 +52,9 @@ public class SentimentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         final Resources resources = getResources();
         final Resources.Theme theme = getActivity().getTheme();
-        mColorPositive = ResourcesCompat.getColor(resources, R.color.polarity_positive, theme);
-        mColorNeutral = ResourcesCompat.getColor(resources, R.color.polarity_neutral, theme);
-        mColorNegative = ResourcesCompat.getColor(resources, R.color.polarity_negative, theme);
+        mColorPositive = ResourcesCompat.getColor(resources, R.color.score_positive, theme);
+        mColorNeutral = ResourcesCompat.getColor(resources, R.color.score_neutral, theme);
+        mColorNegative = ResourcesCompat.getColor(resources, R.color.score_negative, theme);
     }
 
     @Nullable
@@ -66,7 +66,7 @@ public class SentimentFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mPolarity = (TextView) view.findViewById(R.id.polarity);
+        mScore = (TextView) view.findViewById(R.id.score);
         mMagnitude = (TextView) view.findViewById(R.id.magnitude);
         final Bundle args = getArguments();
         if (args.containsKey(ARG_SENTIMENT)) {
@@ -80,13 +80,13 @@ public class SentimentFragment extends Fragment {
     }
 
     private void showSentiment(SentimentInfo sentiment) {
-        mPolarity.setText(String.valueOf(sentiment.polarity));
-        if (sentiment.polarity > 0.25) {
-            mPolarity.setBackgroundColor(mColorPositive);
-        } else if (sentiment.polarity > -0.75) {
-            mPolarity.setBackgroundColor(mColorNeutral);
+        mScore.setText(String.valueOf(sentiment.score));
+        if (sentiment.score > 0.25) {
+            mScore.setBackgroundColor(mColorPositive);
+        } else if (sentiment.score > -0.75) {
+            mScore.setBackgroundColor(mColorNeutral);
         } else {
-            mPolarity.setBackgroundColor(mColorNegative);
+            mScore.setBackgroundColor(mColorNegative);
         }
         mMagnitude.setText(String.valueOf(sentiment.magnitude));
     }

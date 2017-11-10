@@ -16,10 +16,10 @@
 
 package com.google.cloud.android.language.model;
 
-import com.google.api.services.language.v1beta1.model.DependencyEdge;
-import com.google.api.services.language.v1beta1.model.PartOfSpeech;
-import com.google.api.services.language.v1beta1.model.TextSpan;
-import com.google.api.services.language.v1beta1.model.Token;
+import com.google.api.services.language.v1.model.DependencyEdge;
+import com.google.api.services.language.v1.model.PartOfSpeech;
+import com.google.api.services.language.v1.model.TextSpan;
+import com.google.api.services.language.v1.model.Token;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

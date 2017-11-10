@@ -17,13 +17,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
 
     defaultConfig {
         applicationId 'com.google.cloud.android.language'
         minSdkVersion 9
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName '1.0'
         vectorDrawables.useSupportLibrary = true
@@ -38,7 +38,7 @@ android {
 }
 
 ext {
-    supportLibraryVersion = '24.2.1'
+    supportLibraryVersion = '25.3.1'
     googleApiClientVersion = '1.22.0'
 }
 
@@ -50,7 +50,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
 
     // FlexboxLayout
-    compile 'com.google.android:flexbox:0.2.3'
+    compile 'com.google.android:flexbox:0.2.6'
 
     // Dependencies for Google API Client Libraries
     compile("com.google.http-client:google-http-client:$googleApiClientVersion") {
@@ -61,7 +61,7 @@ dependencies {
         exclude module: 'httpclient'
         exclude module: 'jsr305'
     }
-    compile("com.google.apis:google-api-services-language:v1beta1-rev5-$googleApiClientVersion") {
+    compile("com.google.apis:google-api-services-language:v1-rev386-$googleApiClientVersion") {
         exclude module: 'httpclient'
         exclude module: 'jsr305'
     }
@@ -75,3 +75,13 @@ dependencies {
         exclude module: 'support-annotations'
     }
 }
+
+task copySecretKey(type: Copy) {
+    def File secretKey = file "$System.env.GOOGLE_APPLICATION_CREDENTIALS"
+    from secretKey.getParent()
+    include secretKey.getName()
+    into 'src/main/res/raw'
+    rename secretKey.getName(), "credential.json"
+}
+preBuild.dependsOn(copySecretKey)
+

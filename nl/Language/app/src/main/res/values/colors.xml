@@ -20,9 +20,9 @@
     <color name="primaryLight">#C5CAE9</color>
     <color name="accent">#FFC107</color>
 
-    <color name="polarity_positive">#43A047</color>
-    <color name="polarity_neutral">#757575</color>
-    <color name="polarity_negative">#E53935</color>
+    <color name="score_positive">#43A047</color>
+    <color name="score_neutral">#757575</color>
+    <color name="score_negative">#E53935</color>
     <color name="magnitude">#0288D1</color>
 
     <color name="label">#558B2F</color>

@@ -20,6 +20,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import android.os.Parcel;
+import android.support.test.filters.SmallTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
@@ -30,6 +31,7 @@ import org.junit.runner.RunWith;
 public class UtteranceTest {
 
     @Test
+    @SmallTest
     public void instantiate() {
         final Utterance utterance = new Utterance(Utterance.INCOMING, "Hello");
         assertThat(utterance.direction, is(Utterance.INCOMING));
@@ -37,6 +39,7 @@ public class UtteranceTest {
     }
 
     @Test
+    @SmallTest
     public void parcel() {
         final Utterance original = new Utterance(Utterance.INCOMING, "Hello");
         final Parcel parcel = Parcel.obtain();

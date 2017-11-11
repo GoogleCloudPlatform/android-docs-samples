@@ -1,14 +1,14 @@
 # Google Cloud Dialogflow Enterprise examples
 
 This directory contains Android example that uses the
-[Google Cloud Dialogflow Enterprise](https://cloud.google.com/conversation/).
+[Google Cloud Dialogflow Enterprise](https://cloud.google.com/dialogflow-enterprise/).
 
 ## Prerequisites
 
 ### Enable Cloud Dialogflow Enterprise
 
 If you have not already done so, [enable Cloud Dialogflow Enterprise for your project](
-https://cloud.google.com/conversation/docs/quickstart).
+https://cloud.google.com/dialogflow-enterprise/).
 
 ### Set Up to Authenticate With Your Project's Credentials
 

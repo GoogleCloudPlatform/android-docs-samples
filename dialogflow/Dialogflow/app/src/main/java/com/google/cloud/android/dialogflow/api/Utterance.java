@@ -32,7 +32,7 @@ public class Utterance implements Parcelable {
         this.text = text;
     }
 
-    protected Utterance(Parcel in) {
+    private Utterance(Parcel in) {
         direction = in.readInt();
         text = in.readString();
     }

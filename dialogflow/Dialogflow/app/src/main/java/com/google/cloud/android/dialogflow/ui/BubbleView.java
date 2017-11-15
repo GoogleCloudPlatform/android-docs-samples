@@ -18,6 +18,7 @@ package com.google.cloud.android.dialogflow.ui;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
@@ -40,8 +41,12 @@ public class BubbleView extends AppCompatTextView {
     public static final int DIRECTION_INCOMING = 1;
     public static final int DIRECTION_OUTGOING = 2;
 
-    private ColorStateList mTintIncoming;
-    private ColorStateList mTintOutgoing;
+    private final ColorStateList mTintIncoming;
+    private final ColorStateList mTintOutgoing;
+
+    private final int mPaddingVertical;
+    private final int mPaddingHorizontalShort;
+    private final int mPaddingHorizontalLong;
 
     @IntDef({DIRECTION_INCOMING, DIRECTION_OUTGOING})
     @Retention(RetentionPolicy.SOURCE)
@@ -65,6 +70,12 @@ public class BubbleView extends AppCompatTextView {
                 ContextCompat.getColor(context, R.color.incoming));
         mTintOutgoing = ColorStateList.valueOf(
                 ContextCompat.getColor(context, R.color.outgoing));
+        final Resources resources = getResources();
+        mPaddingVertical = resources.getDimensionPixelSize(R.dimen.bubble_padding_vertical);
+        mPaddingHorizontalShort = resources.getDimensionPixelSize(
+                R.dimen.bubble_padding_horizontal_short);
+        mPaddingHorizontalLong = resources.getDimensionPixelSize(
+                R.dimen.bubble_padding_horizontal_long);
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.BubbleView);
         setDirection(a.getInt(R.styleable.BubbleView_direction, DIRECTION_INCOMING));
         a.recycle();
@@ -78,9 +89,13 @@ public class BubbleView extends AppCompatTextView {
         if (mDirection == DIRECTION_INCOMING) {
             setBackgroundResource(R.drawable.bubble_incoming);
             ViewCompat.setBackgroundTintList(this, mTintIncoming);
+            setPadding(mPaddingHorizontalLong, mPaddingVertical,
+                    mPaddingHorizontalShort, mPaddingVertical);
         } else {
             setBackgroundResource(R.drawable.bubble_outgoing);
             ViewCompat.setBackgroundTintList(this, mTintOutgoing);
+            setPadding(mPaddingHorizontalShort, mPaddingVertical,
+                    mPaddingHorizontalLong, mPaddingVertical);
         }
     }
 

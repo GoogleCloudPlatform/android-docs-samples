@@ -41,31 +41,26 @@
         android:orientation="horizontal"
         tools:targetApi="lollipop">
 
-        <FrameLayout
-            android:id="@+id/input"
+        <com.google.cloud.android.dialogflow.ui.AudioIndicatorView
+            android:id="@+id/indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:paddingLeft="@dimen/spacing_medium"
+            android:paddingRight="@dimen/spacing_medium"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <EditText
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/hint_text"
-                android:imeOptions="actionSend"
-                android:inputType="textCapSentences"
-                android:maxLines="1"
-                android:padding="@dimen/spacing_large"/>
-
-            <com.google.cloud.android.dialogflow.ui.AudioIndicatorView
-                android:id="@+id/indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="invisible"/>
-
-        </FrameLayout>
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/hint_text"
+            android:imeOptions="actionSend"
+            android:inputType="textCapSentences"
+            android:maxLines="1"
+            android:padding="@dimen/spacing_large"/>
 
         <ImageButton
             android:id="@+id/toggle"

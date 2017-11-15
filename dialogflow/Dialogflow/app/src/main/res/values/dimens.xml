@@ -22,4 +22,8 @@
     <dimen name="elevation_control">4dp</dimen>
     <dimen name="button_minHeight">48dp</dimen>
     <dimen name="button_minWidth">64dp</dimen>
+
+    <dimen name="bubble_padding_vertical">16dp</dimen>
+    <dimen name="bubble_padding_horizontal_short">16dp</dimen>
+    <dimen name="bubble_padding_horizontal_long">24dp</dimen>
 </resources>

@@ -179,7 +179,7 @@ public class InputHelper {
 
     private void startText() {
         mVoiceRecorder.stop();
-        mIndicator.setVisibility(View.INVISIBLE);
+        mIndicator.setVisibility(View.GONE);
         mText.getText().clear();
         mText.setEnabled(true);
         mText.setHint(R.string.hint_text);

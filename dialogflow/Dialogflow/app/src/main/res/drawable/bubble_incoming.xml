@@ -15,11 +15,7 @@
   limitations under the License.
 -->
 <layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:paddingBottom="16dp"
-    android:paddingLeft="24dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp">
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <rotate
             android:fromDegrees="-45"

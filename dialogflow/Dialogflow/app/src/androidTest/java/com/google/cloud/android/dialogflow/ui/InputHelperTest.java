@@ -84,7 +84,7 @@ public class InputHelperTest extends UiTest {
         assertThat(mEditText.isEnabled(), is(true));
         assertThat(mToggle.isEnabled(), is(true));
         assertThat(mToggle.getVisibility(), is(View.VISIBLE));
-        assertThat(mAudioIndicatorView.getVisibility(), is(View.INVISIBLE));
+        assertThat(mAudioIndicatorView.getVisibility(), is(View.GONE));
     }
 
     @Test

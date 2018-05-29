@@ -49,7 +49,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // androidTestCompile compiles instrumentation tests written using Espresso
     // used by Firebase Test Lab
@@ -57,14 +57,14 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.google.code.findbugs:jsr305:2.0.1'
+    implementation 'com.android.support:appcompat-v7:26.+'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.1'
+    implementation 'com.google.code.findbugs:jsr305:2.0.1'
     testCompile 'junit:junit:4.12'
 
     // V2: Endpoints Framework v2 migration
     endpointsServer project(path: ':backend', configuration: 'endpoints')
-    compile 'com.google.api-client:google-api-client:+'
-    compile 'com.google.http-client:google-http-client-android:1.22.0'
+    implementation 'com.google.api-client:google-api-client:+'
+    implementation 'com.google.http-client:google-http-client-android:1.22.0'
 }
 // [END gradle_script]

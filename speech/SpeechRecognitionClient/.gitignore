@@ -1,0 +1,13 @@
+*.iml
+.gradle
+/local.properties
+/.idea/libraries
+/.idea/caches/
+/.idea/modules.xml
+/.idea/workspace.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+app/src/main/res/raw/credential.json
+

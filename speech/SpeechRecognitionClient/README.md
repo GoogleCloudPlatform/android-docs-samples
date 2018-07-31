@@ -9,7 +9,7 @@ with the [Google Cloud Client Library for Java]
 ### Enable the Data Loss Prevention API
 
 If you have not already done so,
-[enable the Speech-to-Text API for your project](https://cloud.google.com/speech-to-text/docs/quickstart-client-libraries).
+[enable the Speech-to-Text API for your project](https://console.cloud.google.com/flows/enableapi?apiid=speech.googleapis.com).
 
 ### Set Up to Authenticate With Your Project's Credentials
 

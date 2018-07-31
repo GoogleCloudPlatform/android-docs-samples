@@ -9,7 +9,7 @@ with the [Google Cloud Client Library for Java]
 ### Enable the Data Loss Prevention API
 
 If you have not already done so,
-[enable the DLP API for your project](https://cloud.google.com/dlp/docs/quickstart-cli).
+[enable the DLP API for your project](https://console.cloud.google.com/flows/enableapi?apiid=dlp.googleapis.com).
 
 ### Set Up to Authenticate With Your Project's Credentials
 

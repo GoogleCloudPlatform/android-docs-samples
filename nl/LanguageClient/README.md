@@ -55,3 +55,5 @@ that we can improve them.
 
 Open this example and Android studio and run the app. Change the text in the MainActivity
 if you'd like to test the API with a different phrase.
+
+[Google Cloud Client Library for Java]: https://github.com/GoogleCloudPlatform/google-cloud-java

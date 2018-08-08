@@ -37,12 +37,12 @@ internal class AudioEmitter {
     private lateinit var mBuffer: ByteArray
 
     /** Start streaming  */
-    fun start(subscriber: (ByteString) -> Unit) {
-        // TODO: in a real app you may not want to fix these
-        val encoding = AudioFormat.ENCODING_PCM_16BIT
-        val channel = AudioFormat.CHANNEL_IN_MONO
-        val sampleRate = 16000
-
+    fun start(
+            encoding: Int = AudioFormat.ENCODING_PCM_16BIT,
+            channel: Int = AudioFormat.CHANNEL_IN_MONO,
+            sampleRate: Int = 16000,
+            subscriber: (ByteString) -> Unit
+    ) {
         mAudioExecutor = Executors.newSingleThreadScheduledExecutor()
 
         // create and configure recorder

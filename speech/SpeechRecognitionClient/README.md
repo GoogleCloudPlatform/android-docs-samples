@@ -55,3 +55,5 @@ that we can improve them.
 
 Open this example and Android studio and run the app. This example uses the device's 
 microphone and you should simply start speaking to test the app.
+
+[Google Cloud Client Library for Java]: https://github.com/GoogleCloudPlatform/google-cloud-java

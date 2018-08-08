@@ -56,3 +56,5 @@ that we can improve them.
 Open this example and Android studio and run the app. This example uses the device's camera
 so if you are using an emulator it is recommended to set a webcam as the camera 
 (you can do this when you create a new device with the AVD manager).
+
+[Google Cloud Client Library for Java]: https://github.com/GoogleCloudPlatform/google-cloud-java

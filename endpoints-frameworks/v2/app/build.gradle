@@ -59,7 +59,7 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
-    compile 'com.google.code.findbugs:jsr305:2.0.1'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
     testCompile 'junit:junit:4.12'
 
     // V2: Endpoints Framework v2 migration

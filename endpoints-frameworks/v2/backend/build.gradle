@@ -41,8 +41,8 @@ targetCompatibility = JavaVersion.VERSION_1_7
 dependencies {
     // V2: Endpoints Framework v2 migration
     compile 'com.google.endpoints:endpoints-framework:2.0.9'
-
     compile 'javax.inject:javax.inject:1'
+
     compile 'javax.servlet:servlet-api:2.5'
 }
 

@@ -352,6 +352,9 @@ public class SpeechService extends Service {
             // the file in your server and obtain an access token from there.
             // *******************
             final InputStream stream = getResources().openRawResource(R.raw.credential);
+            //In case you get Error:(295, 72) error: cannot find symbol variable raw
+            //Please follow instructions present at
+            //https://github.com/GoogleCloudPlatform/android-docs-samples/blob/master/speech/Speech/README.md
             try {
                 final GoogleCredentials credentials = GoogleCredentials.fromStream(stream)
                         .createScoped(SCOPE);

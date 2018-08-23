@@ -127,6 +127,7 @@ public class VoiceRecorder {
     /**
      * Dismisses the currently ongoing utterance.
      */
+    @SuppressWarnings("WeakerAccess")
     public void dismiss() {
         if (mLastVoiceHeardMillis != Long.MAX_VALUE) {
             mLastVoiceHeardMillis = Long.MAX_VALUE;

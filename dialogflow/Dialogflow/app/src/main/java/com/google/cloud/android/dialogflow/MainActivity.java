@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String STATE_HISTORY = "history";
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting
     DialogflowService mDialogflowService;
 
     private LinearLayoutManager mLayoutManager;

@@ -1,4 +1,4 @@
-// Copyright 2017 Google Inc.
+// Copyright 2018 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,30 @@
 
 syntax = "proto3";
 
-package google.cloud.dialogflow.v2beta1;
+package google.cloud.dialogflow.v2;
 
 import "google/api/annotations.proto";
-import "google/cloud/dialogflow/v2beta1/context.proto";
-import "google/cloud/dialogflow/v2beta1/intent.proto";
-import "google/cloud/dialogflow/v2beta1/session.proto";
+import "google/cloud/dialogflow/v2/context.proto";
+import "google/cloud/dialogflow/v2/intent.proto";
+import "google/cloud/dialogflow/v2/session.proto";
 import "google/protobuf/struct.proto";
 
 option cc_enable_arenas = true;
-option csharp_namespace = "Google.Cloud.Dialogflow.V2beta1";
-option go_package = "google.golang.org/genproto/googleapis/cloud/dialogflow/v2beta1;dialogflow";
+option csharp_namespace = "Google.Cloud.Dialogflow.V2";
+option go_package = "google.golang.org/genproto/googleapis/cloud/dialogflow/v2;dialogflow";
 option java_multiple_files = true;
 option java_outer_classname = "WebhookProto";
-option java_package = "com.google.cloud.dialogflow.v2beta1";
+option java_package = "com.google.cloud.dialogflow.v2";
 option objc_class_prefix = "DF";
 
 
 // The request message for a webhook call.
 message WebhookRequest {
+  // The unique identifier of detectIntent request session.
+  // Can be used to identify end-user inside webhook implementation.
+  // Format: `projects/<Project ID>/agent/sessions/<Session ID>`.
+  string session = 4;
+
   // The unique identifier of the response. Contains the same value as
   // `[Streaming]DetectIntentResponse.response_id`.
   string response_id = 1;
@@ -60,6 +65,28 @@ message WebhookResponse {
   string source = 3;
 
   // Optional. This value is passed directly to `QueryResult.webhook_payload`.
+  // See the related `fulfillment_messages[i].payload field`, which may be used
+  // as an alternative to this field.
+  //
+  // This field can be used for Actions on Google responses.
+  // It should have a structure similar to the JSON message shown here. For more
+  // information, see
+  // [Actions on Google Webhook
+  // Format](https://developers.google.com/actions/dialogflow/webhook)
+  // <pre>{
+  //   "google": {
+  //     "expectUserResponse": true,
+  //     "richResponse": {
+  //       "items": [
+  //         {
+  //           "simpleResponse": {
+  //             "textToSpeech": "this is a simple response"
+  //           }
+  //         }
+  //       ]
+  //     }
+  //   }
+  // }</pre>
   google.protobuf.Struct payload = 4;
 
   // Optional. The collection of output contexts. This value is passed directly
@@ -72,10 +99,10 @@ message WebhookResponse {
 }
 
 // Represents the contents of the original request that was passed to
-// `[Streaming]DetectIntent call`.
+// the `[Streaming]DetectIntent` call.
 message OriginalDetectIntentRequest {
-  // The source of this request, e.g., Google, Facebook, Slack. It is set by
-  // Dialogflow-owned servers.
+  // The source of this request, e.g., `google`, `facebook`, `slack`. It is set
+  // by Dialogflow-owned servers.
   string source = 1;
 
   // Optional. This field is set to the value of `QueryParameters.payload` field

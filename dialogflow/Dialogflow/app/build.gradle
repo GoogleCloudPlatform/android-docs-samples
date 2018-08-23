@@ -18,8 +18,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
 ext {
-    supportLibraryVersion = '27.0.0'
-    grpcVersion = '1.7.0'
+    supportLibraryVersion = '27.1.1'
+    grpcVersion = '1.14.0'
 }
 
 android {
@@ -101,10 +101,11 @@ dependencies {
 
     // Test
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.11.0'
-    androidTestImplementation 'org.mockito:mockito-android:2.11.0'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation 'org.mockito:mockito-core:2.19.0'
+    androidTestImplementation 'org.mockito:mockito-android:2.19.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 task copySecretKey(type: Copy) {

@@ -57,7 +57,7 @@ public class AudioIndicatorViewTest extends UiTest {
 
     @Test
     @MediumTest
-    public void hearingVoice() throws Throwable {
+    public void hearingVoice() {
         assertThat(mAudioIndicatorView.isHearingVoice(), is(false));
         onView(withId(R.id.indicator)).perform(setHearingVoice(true));
         assertThat(mAudioIndicatorView.isHearingVoice(), is(true));

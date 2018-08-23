@@ -58,18 +58,22 @@ public class MessageDialogFragment extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new AlertDialog.Builder(getContext())
-                .setMessage(getArguments().getString(ARG_MESSAGE))
+        final AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        final Bundle args = getArguments();
+        if (args != null) {
+            builder.setMessage(getArguments().getString(ARG_MESSAGE));
+        }
+        return builder
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ((Listener) getActivity()).onMessageDialogDismissed();
+                        ((Listener) requireActivity()).onMessageDialogDismissed();
                     }
                 })
                 .setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
-                        ((Listener) getActivity()).onMessageDialogDismissed();
+                        ((Listener) requireActivity()).onMessageDialogDismissed();
                     }
                 })
                 .create();

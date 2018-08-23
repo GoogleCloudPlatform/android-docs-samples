@@ -3,20 +3,19 @@ config_schema_version: 1.0.0
 # The settings of generated code in a specific language.
 language_settings:
   java:
-    package_name: com.google.cloud.dialogflow.v2beta1
+    package_name: com.google.cloud.dialogflow.v2
   python:
-    package_name: google.cloud.dialogflow_v2beta1.gapic
+    package_name: google.cloud.dialogflow_v2.gapic
   go:
-    package_name: cloud.google.com/go/cloud/dialogflow/apiv2beta1
+    package_name: cloud.google.com/go/dialogflow/apiv2
   csharp:
-    package_name: Google.Cloud.Dialogflow.V2beta1
+    package_name: Google.Cloud.Dialogflow.V2
   ruby:
-    package_name: Google::Cloud::Dialogflow::V2beta1
+    package_name: Google::Cloud::Dialogflow::V2
   php:
-    package_name: Google\Cloud\Dialogflow\V2beta1
+    package_name: Google\Cloud\Dialogflow\V2
   nodejs:
-    package_name: dialogflow.v2beta1
-    domain_layer_location: google-cloud
+    package_name: dialogflow.v2
 # The configuration for the license header to put on generated files.
 license_header:
   # The file containing the copyright line(s).
@@ -26,7 +25,7 @@ license_header:
 # A list of API interface configurations.
 interfaces:
   # The fully qualified name of the API interface.
-- name: google.cloud.dialogflow.v2beta1.Agents
+- name: google.cloud.dialogflow.v2.Agents
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -40,6 +39,9 @@ interfaces:
   collections:
   - name_pattern: projects/{project}
     entity_name: project
+    language_overrides:
+    - language: csharp
+      common_resource_name: Google.Api.Gax.ResourceNames.ProjectName
   # Definition for retryable codes.
   retry_codes_def:
   - name: idempotent
@@ -150,8 +152,10 @@ interfaces:
       parent: project
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(train_agent_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -171,8 +175,10 @@ interfaces:
       parent: project
     timeout_millis: 60000
     long_running:
-      return_type: google.cloud.dialogflow.v2beta1.ExportAgentResponse
+      # LINT.IfChange(export_agent_long_running_operation)
+      return_type: google.cloud.dialogflow.v2.ExportAgentResponse
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -188,8 +194,10 @@ interfaces:
       parent: project
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(import_agent_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -206,15 +214,17 @@ interfaces:
       parent: project
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(restore_agent_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
     resource_name_treatment: STATIC_TYPES
   # The fully qualified name of the API interface.
-- name: google.cloud.dialogflow.v2beta1.Contexts
+- name: google.cloud.dialogflow.v2.Contexts
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -385,7 +395,7 @@ interfaces:
     timeout_millis: 60000
     resource_name_treatment: STATIC_TYPES
   # The fully qualified name of the API interface.
-- name: google.cloud.dialogflow.v2beta1.EntityTypes
+- name: google.cloud.dialogflow.v2.EntityTypes
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -564,8 +574,10 @@ interfaces:
       parent: project_agent
     timeout_millis: 60000
     long_running:
-      return_type: google.cloud.dialogflow.v2beta1.BatchUpdateEntityTypesResponse
+      # LINT.IfChange(batch_update_entity_types_long_running_operation)
+      return_type: google.cloud.dialogflow.v2.BatchUpdateEntityTypesResponse
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -587,8 +599,10 @@ interfaces:
       parent: project_agent
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(batch_delete_entity_types_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -614,8 +628,10 @@ interfaces:
       parent: entity_type
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(batch_create_entities_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -641,8 +657,10 @@ interfaces:
       parent: entity_type
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(batch_update_entities_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -668,15 +686,17 @@ interfaces:
       parent: entity_type
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(batch_delete_entities_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
     resource_name_treatment: STATIC_TYPES
   # The fully qualified name of the API interface.
-- name: google.cloud.dialogflow.v2beta1.Intents
+- name: google.cloud.dialogflow.v2.Intents
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -858,11 +878,13 @@ interfaces:
     retry_codes_name: non_idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: agent
+      parent: project_agent
     timeout_millis: 60000
     long_running:
-      return_type: google.cloud.dialogflow.v2beta1.BatchUpdateIntentsResponse
+      # LINT.IfChange(batch_update_intents_long_running_operation)
+      return_type: google.cloud.dialogflow.v2.BatchUpdateIntentsResponse
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
@@ -881,18 +903,20 @@ interfaces:
     retry_codes_name: idempotent
     retry_params_name: default
     field_name_patterns:
-      parent: project
+      parent: project_agent
     timeout_millis: 60000
     long_running:
+      # LINT.IfChange(batch_delete_intents_long_running_operation)
       return_type: google.protobuf.Empty
       metadata_type: google.protobuf.Struct
+      # LINT.ThenChange()
       initial_poll_delay_millis: 500
       poll_delay_multiplier: 1.5
       max_poll_delay_millis: 5000
       total_poll_timeout_millis: 300000
     resource_name_treatment: STATIC_TYPES
   # The fully qualified name of the API interface.
-- name: google.cloud.dialogflow.v2beta1.SessionEntityTypes
+- name: google.cloud.dialogflow.v2.SessionEntityTypes
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -1049,7 +1073,7 @@ interfaces:
     timeout_millis: 60000
     resource_name_treatment: STATIC_TYPES
   # The fully qualified name of the API interface.
-- name: google.cloud.dialogflow.v2beta1.Sessions
+- name: google.cloud.dialogflow.v2.Sessions
   # A list of resource collection configurations.
   # Consists of a name_pattern and an entity_name.
   # The name_pattern is a pattern to describe the names of the resources of this
@@ -1232,10 +1256,10 @@ resource_name_generation:
     name: intent
 - message_name: BatchUpdateIntentsRequest
   field_entity_map:
-    parent: agent
+    parent: project_agent
 - message_name: BatchDeleteIntentsRequest
   field_entity_map:
-    parent: project
+    parent: project_agent
 - message_name: ListSessionEntityTypesRequest
   field_entity_map:
     parent: session

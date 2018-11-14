@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name" translatable="false">Speech Translator</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="section_format">Tap the microphone button and record a message.</string>
+    <string name="title_activity_translate" translatable="false">TranslateActivity</string>
+    <string name="tab_text_1">English</string>
+    <string name="tab_text_2">Spanish</string>
+    <string name="tab_text_3">French</string>
+    <string name="speaker_emoji" translatable="false">🔈</string>
+</resources>

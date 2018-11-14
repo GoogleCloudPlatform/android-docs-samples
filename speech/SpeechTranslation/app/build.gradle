@@ -1,0 +1,101 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.google.cloud.examples.speechtranslation"
+        minSdkVersion 24
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            useProguard false
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'androidx.media:media:1.0.0'
+    implementation 'androidx.vectordrawable:vectordrawable-animated:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.viewpager:viewpager:1.0.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.7.2'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.7.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'org.chromium.net:cronet-embedded:70.3538.110'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
+
+    def lifecycle_version = "2.0.0"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+}
+
+task deployCloudFunction(type: Exec) {
+    workingDir '../'
+    commandLine './deploy_cloud_function.sh'
+}
+
+task setupAndroidEnv(type: Exec) {
+    workingDir '../'
+    commandLine './setup_android_env.sh'
+}
+
+task startEmulator {
+    doFirst {
+        println("Starting emulator...")
+        ext.process = new ProcessBuilder()
+                .directory(new File("$projectDir/build/android-sdk/tools"))
+                .command('emulator', '@playchat', '-no-audio', '-no-window')
+                .start()
+    }
+    doLast {
+        println("Waiting for emulator...")
+        ext.process = new ProcessBuilder()
+                .directory(new File("$projectDir/build/android-sdk/platform-tools/"))
+                .command('adb', 'wait-for-device')
+                .start()
+        ext.process.waitFor()
+    }
+}
+
+task copyKokoroTestConfig(type: Copy) {
+    from "$System.env.KOKORO_GFILE_DIR/speech_translation_test.xml"
+    into "$projectDir/src/main/res/values/"
+    rename 'speech_translation_test.xml', 'speech_translation.xml'
+}
+
+task copyKokoroSecrets(type: Copy) {
+    from "$System.env.KOKORO_GFILE_DIR/secrets-password.txt"
+    into "$projectDir/../"
+}
+repositories {
+    mavenCentral()
+}

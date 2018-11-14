@@ -1,0 +1,21 @@
+{
+  "transcription":"this is a test please translate this message",
+  "gcsBucket":"speech-to-speech-output",
+  "translations":[
+    {
+      "languageCode":"en",
+      "text":"this is a test please translate this message",
+      "gcsPath":"en/4ee828ac-1ee1-42de-aa67-ca67c6be9ae6.mp3"
+    },
+    {
+      "languageCode":"es",
+      "text":"esta es una prueba por favor traduce este mensaje",
+      "gcsPath":"es/a5cec63a-35d5-480c-8f1f-6c2fa9bcfd8f.mp3"
+    },
+    {
+      "languageCode":"fr",
+      "text":"ceci est un test s'il vous plaît traduire ce message",
+      "gcsPath":"fr/9573f3e9-1a96-4e55-a703-0b346714c4ef.mp3"
+    }
+  ]
+}

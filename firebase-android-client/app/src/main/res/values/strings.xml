@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">PlayChat</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="sign_out">Sign Out</string>
+
+    <string name="channel_label">Select a channel from menu</string>
+    <string name="message_hint">Enter a message</string>
+
+    <string-array name="channels">
+        <item>books</item>
+        <item>game</item>
+        <item>music</item>
+        <item>sports</item>
+        <item>travel</item>
+    </string-array>
+
+    <!-- nav_header_play -->
+    <string name="nav_header_play_icon">Android icon with pattern background</string>
+    <string name="channel_drawer_label">Channels</string>
+
+    <!-- PlayActivity -->
+    <string name="signed_in_label">Signed in as %s</string>
+    <string name="authenticating_label">Authenticating with Firebase…</string>
+    <string name="authentication_failed">Firebase authentication failed: %s</string>
+    <string name="mic_button_content_descriptor">Microphone button</string>
+</resources>

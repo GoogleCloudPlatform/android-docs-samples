@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Google Cloud Function that provides speech translation capabilities.
+         This value should be in the form:
+         https://[GCF_REGION]-[GOOGLE_CLOUD_PROJECT].cloudfunctions.net/[FUNCTION_NAME]
+         For example:
+         https://us-central1-myproject-18143.cloudfunctions.net/speechTranslate
+         See https://github.com/GoogleCloudPlatform/nodejs-docs-samples/tree/master/functions/speech-to-speech
+         for more information. Setting this value enables speech translation capabilities
+         on the sample. -->
+    <string
+        name="speechToSpeechEndpoint"
+        formatted="false"
+        translatable="false">https://us-central1-YOUR-PROJECT-ID.cloudfunctions.net/speechTranslate</string>
+</resources>

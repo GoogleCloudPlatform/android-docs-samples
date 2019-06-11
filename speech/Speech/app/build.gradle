@@ -18,17 +18,18 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
 ext {
-    supportLibraryVersion = '25.4.0'
-    grpcVersion = '1.4.0'
+    supportLibraryVersion = '28.0.0'
+    grpcVersion = '1.21.0'
+    protobufVersion = '3.8.0'
 }
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId "com.google.cloud.android.speech"
-        targetSdkVersion 25
+        targetSdkVersion 28
+        minSdkVersion 16
         versionCode 1
         versionName '1.0'
     }
@@ -39,17 +40,6 @@ android {
             storePassword project.properties.storePassword
             keyAlias project.properties.keyAlias
             keyPassword project.properties.keyPassword
-        }
-    }
-
-    productFlavors {
-        dev {
-            // Minimum version with platform multi-dex support
-            minSdkVersion 21
-        }
-        prod {
-            // Minimum version that can run gRPC (TLS extension)
-            minSdkVersion 16
         }
     }
 
@@ -64,16 +54,11 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    configurations.all {
-        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
-        resolutionStrategy.force "com.android.support:support-annotations:$supportLibraryVersion"
-    }
 }
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.3.0'
+        artifact = "com.google.protobuf:protoc:$protobufVersion"
     }
     plugins {
         javalite {
@@ -97,33 +82,31 @@ protobuf {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-
     // Support libraries
-    compile "com.android.support:design:$supportLibraryVersion"
-    compile "com.android.support:cardview-v7:$supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:cardview-v7:$supportLibraryVersion"
+    implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
 
     // gRPC
-    compile "io.grpc:grpc-okhttp:$grpcVersion"
-    compile "io.grpc:grpc-protobuf-lite:$grpcVersion"
-    compile "io.grpc:grpc-stub:$grpcVersion"
-    compile 'javax.annotation:javax.annotation-api:1.2'
-    protobuf 'com.google.protobuf:protobuf-java:3.3.1'
+    implementation "io.grpc:grpc-okhttp:$grpcVersion"
+    implementation "io.grpc:grpc-protobuf-lite:$grpcVersion"
+    implementation "io.grpc:grpc-stub:$grpcVersion"
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    protobuf "com.google.protobuf:protobuf-java:$protobufVersion"
 
     // OAuth2 for Google API
-    compile('com.google.auth:google-auth-library-oauth2-http:0.7.0') {
+    implementation('com.google.auth:google-auth-library-oauth2-http:0.16.1') {
         exclude module: 'httpclient'
     }
 
     // Tests
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 task copySecretKey(type: Copy) {
-    def File secretKey = file "$System.env.GOOGLE_APPLICATION_CREDENTIALS"
+    File secretKey = file "$System.env.GOOGLE_APPLICATION_CREDENTIALS"
     from secretKey.getParent()
     include secretKey.getName()
     into 'src/main/res/raw'

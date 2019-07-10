@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Login"/>
+
+        <Button
+            android:id="@+id/make_request"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call API" />
+
+        <Button
+            android:id="@+id/clear_output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clear Output" />
+
+        <TextView
+            android:id="@+id/result_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+</ScrollView>
+
+

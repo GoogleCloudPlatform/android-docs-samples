@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Dialog Flow</string>
+    <string name="default_notification_channel_id">ChannelId</string>
+</resources>

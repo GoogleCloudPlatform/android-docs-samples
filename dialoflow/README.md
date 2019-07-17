@@ -59,7 +59,7 @@ firebase deploy --only functions
 - As soon the app launches, it will ask for the google sign-in.
 - After successful signing in, choose the option by selecting a checkbox and click on chat button
 - Type the message to send and click on the send button on the bottom right.
-- Alternatively tap on the mic button to speak and send the message to the Dialog Flow.
+- Alternatively tap on the mic button to speak and send the message to the Dialogflow.
 
 
 [cloud-console]: https://console.cloud.google.com

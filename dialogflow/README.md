@@ -30,7 +30,7 @@ To call the Dialogflow API from Android, you need to get authorization tokens fr
 
 ### Setup the app
 -Clone this repository `git clone https://github.com/GoogleCloudPlatform/android-docs-samples.git`
-- Replace PROJECT_ID in AppController.java with your Project ID
+- Replace PROJECT_ID in strings.xml with your Project ID
 
 ###  Setup Firebase on the application:
 - Complete the steps for [Add Firebase to your app](https://firebase.google.com/docs/android/setup) and expand the "Create a Firebase project" section for instructions on how to add project to your Firebase console. Note: No need to complete any other sections, they are already done. 

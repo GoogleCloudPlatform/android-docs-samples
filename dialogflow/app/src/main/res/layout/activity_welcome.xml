@@ -53,16 +53,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/text_to_speech"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:checked="true"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                app:srcCompat="@android:drawable/ic_menu_info_details" />
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -85,14 +76,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                app:srcCompat="@android:drawable/ic_menu_info_details" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -114,14 +97,6 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                app:srcCompat="@android:drawable/ic_menu_info_details" />
-
         </LinearLayout>
 
     </LinearLayout>
@@ -135,29 +110,12 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/btnSignInGoogle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="#f49c39"
-            android:text="@string/sign_in_google" />
-
-        <Button
-            android:id="@+id/btnSignInAnonymous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="#f49c39"
-            android:text="@string/sign_in_anonymously" />
-
-        <Button
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="#f49c39"
-            android:text="@string/next"
-            android:visibility="gone"/>
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/next"/>
 
     </LinearLayout>
 

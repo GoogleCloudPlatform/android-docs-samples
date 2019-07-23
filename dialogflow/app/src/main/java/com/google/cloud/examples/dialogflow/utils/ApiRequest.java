@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.google.api.client.util.Maps;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
@@ -25,10 +26,11 @@ import com.google.cloud.dialogflow.v2beta1.KnowledgeBaseName;
 import com.google.cloud.examples.dialogflow.AppController;
 import com.google.cloud.examples.dialogflow.ui.ChatActivity;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 
@@ -50,10 +52,10 @@ public class ApiRequest {
      * @param context     :   context
      * @param accessToken :   access token received from fcm
      * @param expiryTime  :   expiry time received from fcm
-     * @param msg           :   messagen sent by the user
-     * @param tts           :   send mesaage to text to speech if true
-     * @param sentiment     :   send mesaage to sentiment analysis if true
-     * @param knowledge     :   send mesaage to knowledge base if true
+     * @param msg         :   messagen sent by the user
+     * @param tts         :   send mesaage to text to speech if true
+     * @param sentiment   :   send mesaage to sentiment analysis if true
+     * @param knowledge   :   send mesaage to knowledge base if true
      */
     public void callAPI(Context context, String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
         Toast.makeText(context, "Calling the API", Toast.LENGTH_SHORT).show();
@@ -63,10 +65,56 @@ public class ApiRequest {
             detectIntentSentimentAnalysis(msg);
         }
         if (tts) {
-            detectIntentWithTexttoSpeech(msg);
+            detectIntentWithTextToSpeech(msg);
         }
         if (knowledge) {
             new MyKnowledgeBaseRequest().execute(msg);
+        }
+
+        if(!tts && !sentiment && !knowledge) {
+            detectIntent(msg);
+        }
+    }
+
+    /**
+     * function to get the detect the intent
+     */
+    private void detectIntent(String msg) {
+        // Instantiates a client
+        AccessToken accessToken = new AccessToken(token, tokenExpiration);
+        Credentials credentials = GoogleCredentials.create(accessToken);
+        FixedCredentialsProvider fixedCredentialsProvider = FixedCredentialsProvider.create(credentials);
+        try {
+            SessionsSettings sessionsSettings = SessionsSettings.newBuilder().setCredentialsProvider(fixedCredentialsProvider).build();
+
+            try (SessionsClient sessionsClient = SessionsClient.create(sessionsSettings)) {
+                // Set the session name using the sessionId (UUID) and projectID (my-project-id)
+                SessionName session = SessionName.of(AppController.PROJECT_ID, AppController.SESSION_ID);
+                System.out.println("Session Path: " + session.toString());
+
+                // Set the text (hello) and language code (en-US) for the query
+                TextInput textInput = TextInput.newBuilder()
+                        .setText(msg)
+                        .setLanguageCode("en-US")
+                        .build();
+
+                // Build the query with the TextInput
+                QueryInput queryInput = QueryInput.newBuilder()
+                        .setText(textInput)
+                        .build();
+
+                // Performs the detect intent request
+                DetectIntentResponse response = sessionsClient.detectIntent(session, queryInput);
+
+                // Display the query result
+                QueryResult queryResult = response.getQueryResult();
+                ChatActivity.addMsg("Detect Intent: " + queryResult.getFulfillmentText() + "(confidence: " + queryResult.getIntentDetectionConfidence() + ")", 0);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -76,8 +124,6 @@ public class ApiRequest {
      * @param msg :   message sent from user
      */
     private void detectIntentSentimentAnalysis(String msg) {
-        List<String> texts = new ArrayList<>();
-        texts.add(msg);
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
@@ -89,36 +135,32 @@ public class ApiRequest {
                 // Set the session name using the sessionId (UUID) and projectID (my-project-id)
                 SessionName session = SessionName.of(AppController.PROJECT_ID, AppController.SESSION_ID);
 
-                // Detect intents for each text input
-                for (String text : texts) {
-                    // Set the text (hello) and language code (en-US) for the query
-                    TextInput.Builder textInput = TextInput.newBuilder().setText(text).setLanguageCode("en-US");
+                // Set the text (hello) and language code (en-US) for the query
+                TextInput.Builder textInput = TextInput.newBuilder().setText(msg).setLanguageCode("en-US");
 
-                    // Build the query with the TextInput
-                    QueryInput queryInput = QueryInput.newBuilder().setText(textInput).build();
+                // Build the query with the TextInput
+                QueryInput queryInput = QueryInput.newBuilder().setText(textInput).build();
 
-                    //
-                    SentimentAnalysisRequestConfig sentimentAnalysisRequestConfig =
-                            SentimentAnalysisRequestConfig.newBuilder().setAnalyzeQueryTextSentiment(true).build();
+                SentimentAnalysisRequestConfig sentimentAnalysisRequestConfig =
+                        SentimentAnalysisRequestConfig.newBuilder().setAnalyzeQueryTextSentiment(true).build();
 
-                    QueryParameters queryParameters =
-                            QueryParameters.newBuilder()
-                                    .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
-                                    .build();
-                    DetectIntentRequest detectIntentRequest =
-                            DetectIntentRequest.newBuilder()
-                                    .setSession(session.toString())
-                                    .setQueryInput(queryInput)
-                                    .setQueryParams(queryParameters)
-                                    .build();
+                QueryParameters queryParameters =
+                        QueryParameters.newBuilder()
+                                .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
+                                .build();
+                DetectIntentRequest detectIntentRequest =
+                        DetectIntentRequest.newBuilder()
+                                .setSession(session.toString())
+                                .setQueryInput(queryInput)
+                                .setQueryParams(queryParameters)
+                                .build();
 
-                    // Performs the detect intent request
-                    DetectIntentResponse response = sessionsClient.detectIntent(detectIntentRequest);
+                // Performs the detect intent request
+                DetectIntentResponse response = sessionsClient.detectIntent(detectIntentRequest);
 
-                    // Display the query result
-                    QueryResult queryResult = response.getQueryResult();
-                    ChatActivity.addMsg("Sentiment Analysis: " + queryResult.getFulfillmentText() + "(confidence: " + queryResult.getIntentDetectionConfidence() + ")", 0);
-                }
+                // Display the query result
+                QueryResult queryResult = response.getQueryResult();
+                ChatActivity.addMsg("Sentiment Analysis: " + queryResult.getFulfillmentText() + "(confidence: " + queryResult.getIntentDetectionConfidence() + ")", 0);
             } catch (Throwable ex) {
                 ex.printStackTrace();
             }
@@ -132,9 +174,7 @@ public class ApiRequest {
      *
      * @param queryMsg :   message sent from user
      */
-    private void detectIntentWithTexttoSpeech(String queryMsg) {
-        List<String> texts = new ArrayList<>();
-        texts.add(queryMsg);
+    private void detectIntentWithTextToSpeech(String queryMsg) {
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
@@ -146,39 +186,35 @@ public class ApiRequest {
                 // Set the session name using the sessionId (UUID) and projectID (my-project-id)
                 SessionName session = SessionName.of(AppController.PROJECT_ID, AppController.SESSION_ID);
 
-                // Detect intents for each text input
-                for (String text : texts) {
-                    // Set the text (hello) and language code (en-US) for the query
-                    TextInput.Builder textInput = TextInput.newBuilder().setText(text).setLanguageCode("en-US");
+                // Set the text (hello) and language code (en-US) for the query
+                TextInput.Builder textInput = TextInput.newBuilder().setText(queryMsg).setLanguageCode("en-US");
 
-                    // Build the query with the TextInput
-                    QueryInput queryInput = QueryInput.newBuilder().setText(textInput).build();
+                // Build the query with the TextInput
+                QueryInput queryInput = QueryInput.newBuilder().setText(textInput).build();
 
-                    //
-                    OutputAudioEncoding audioEncoding = OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_LINEAR_16;
-                    int sampleRateHertz = 16000;
-                    OutputAudioConfig outputAudioConfig =
-                            OutputAudioConfig.newBuilder()
-                                    .setAudioEncoding(audioEncoding)
-                                    .setSampleRateHertz(sampleRateHertz)
-                                    .build();
+                OutputAudioEncoding audioEncoding = OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_LINEAR_16;
+                int sampleRateHertz = 16000;
+                OutputAudioConfig outputAudioConfig =
+                        OutputAudioConfig.newBuilder()
+                                .setAudioEncoding(audioEncoding)
+                                .setSampleRateHertz(sampleRateHertz)
+                                .build();
 
-                    DetectIntentRequest dr =
-                            DetectIntentRequest.newBuilder()
-                                    .setQueryInput(queryInput)
-                                    .setOutputAudioConfig(outputAudioConfig)
-                                    .setSession(session.toString())
-                                    .build();
+                DetectIntentRequest dr =
+                        DetectIntentRequest.newBuilder()
+                                .setQueryInput(queryInput)
+                                .setOutputAudioConfig(outputAudioConfig)
+                                .setSession(session.toString())
+                                .build();
 
-                    // Performs the detect intent request
-                    // DetectIntentResponse response = sessionsClient.detectIntent(session,
-                    // queryInput,outputAudioConfig);
-                    DetectIntentResponse response = sessionsClient.detectIntent(dr);
+                // Performs the detect intent request
+                // DetectIntentResponse response = sessionsClient.detectIntent(session,
+                // queryInput,outputAudioConfig);
+                DetectIntentResponse response = sessionsClient.detectIntent(dr);
 
-                    // Display the query result
-                    QueryResult queryResult = response.getQueryResult();
-                    ChatActivity.addMsg("Text To Speech: " + queryResult.getFulfillmentText() + " (Confidence: " + queryResult.getIntentDetectionConfidence() + ")", 0);
-                }
+                // Display the query result
+                QueryResult queryResult = response.getQueryResult();
+                ChatActivity.addMsg("Text To Speech: " + queryResult.getFulfillmentText() + " (Confidence: " + queryResult.getIntentDetectionConfidence() + ")", 0);
             } catch (Throwable ex) {
                 ex.printStackTrace();
             }
@@ -195,8 +231,6 @@ public class ApiRequest {
      */
     private void detectIntentKnowledge(String knowledgebaseId,
                                        String msg) {
-        List<String> texts = new ArrayList<>();
-        texts.add(msg);
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
@@ -207,38 +241,35 @@ public class ApiRequest {
                 // Set the session name using the sessionId (UUID) and projectID (my-project-id)
                 SessionName session = SessionName.of(AppController.PROJECT_ID, AppController.SESSION_ID);
 
-                // Detect intents for each text input
-                for (String text : texts) {
-                    // Set the text and language code (en-US) for the query
-                    com.google.cloud.dialogflow.v2beta1.TextInput.Builder textInput = com.google.cloud.dialogflow.v2beta1.TextInput.newBuilder().setText(text).setLanguageCode("en-US");
-                    // Build the query with the TextInput
-                    com.google.cloud.dialogflow.v2beta1.QueryInput queryInput = com.google.cloud.dialogflow.v2beta1.QueryInput.newBuilder().setText(textInput).build();
+                // Set the text and language code (en-US) for the query
+                com.google.cloud.dialogflow.v2beta1.TextInput.Builder textInput = com.google.cloud.dialogflow.v2beta1.TextInput.newBuilder().setText(msg).setLanguageCode("en-US");
+                // Build the query with the TextInput
+                com.google.cloud.dialogflow.v2beta1.QueryInput queryInput = com.google.cloud.dialogflow.v2beta1.QueryInput.newBuilder().setText(textInput).build();
 
-                    KnowledgeBaseName knowledgeBaseName = KnowledgeBaseName.of(AppController.PROJECT_ID, knowledgebaseId);
-                    com.google.cloud.dialogflow.v2beta1.QueryParameters queryParameters =
-                            com.google.cloud.dialogflow.v2beta1.QueryParameters.newBuilder()
-                                    .addKnowledgeBaseNames(knowledgeBaseName.toString())
-                                    .build();
+                KnowledgeBaseName knowledgeBaseName = KnowledgeBaseName.of(AppController.PROJECT_ID, knowledgebaseId);
+                com.google.cloud.dialogflow.v2beta1.QueryParameters queryParameters =
+                        com.google.cloud.dialogflow.v2beta1.QueryParameters.newBuilder()
+                                .addKnowledgeBaseNames(knowledgeBaseName.toString())
+                                .build();
 
-                    com.google.cloud.dialogflow.v2beta1.DetectIntentRequest detectIntentRequest =
-                            com.google.cloud.dialogflow.v2beta1.DetectIntentRequest.newBuilder()
-                                    .setSession(session.toString())
-                                    .setQueryInput(queryInput)
-                                    .setQueryParams(queryParameters)
-                                    .build();
-                    // Performs the detect intent request
-                    com.google.cloud.dialogflow.v2beta1.DetectIntentResponse response = sessionsClient.detectIntent(detectIntentRequest);
+                com.google.cloud.dialogflow.v2beta1.DetectIntentRequest detectIntentRequest =
+                        com.google.cloud.dialogflow.v2beta1.DetectIntentRequest.newBuilder()
+                                .setSession(session.toString())
+                                .setQueryInput(queryInput)
+                                .setQueryParams(queryParameters)
+                                .build();
+                // Performs the detect intent request
+                com.google.cloud.dialogflow.v2beta1.DetectIntentResponse response = sessionsClient.detectIntent(detectIntentRequest);
 
-                    // Display the query result
-                    com.google.cloud.dialogflow.v2beta1.QueryResult queryResult = response.getQueryResult();
+                // Display the query result
+                com.google.cloud.dialogflow.v2beta1.QueryResult queryResult = response.getQueryResult();
 
-                    KnowledgeAnswers knowledgeAnswers = queryResult.getKnowledgeAnswers();
-                    for (KnowledgeAnswers.Answer answer : knowledgeAnswers.getAnswersList()) {
-                        ChatActivity.addMsg("Knowledge Base: " + answer.getAnswer() + " (Confidence: " + answer.getMatchConfidence() + ")", 0);
-                    }
-                    if (knowledgeAnswers.getAnswersCount() == 0) {
-                        ChatActivity.addMsg("Knowledge Base: No Response", 0);
-                    }
+                KnowledgeAnswers knowledgeAnswers = queryResult.getKnowledgeAnswers();
+                for (KnowledgeAnswers.Answer answer : knowledgeAnswers.getAnswersList()) {
+                    ChatActivity.addMsg("Knowledge Base: " + answer.getAnswer() + " (Confidence: " + answer.getMatchConfidence() + ")", 0);
+                }
+                if (knowledgeAnswers.getAnswersCount() == 0) {
+                    ChatActivity.addMsg("Knowledge Base: No Response", 0);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

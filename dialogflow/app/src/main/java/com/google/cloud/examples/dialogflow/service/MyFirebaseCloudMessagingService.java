@@ -9,6 +9,7 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class MyFirebaseCloudMessagingService extends FirebaseMessagingService {
 
@@ -27,12 +28,13 @@ public class MyFirebaseCloudMessagingService extends FirebaseMessagingService {
 
     /**
      * function to save the token data in the AppController
-     * @param expiryTime     :   expiry time received from FCM
-     * @param token   :   token received from FCM
+     *
+     * @param expiryTime :   expiry time received from FCM
+     * @param token      :   token received from FCM
      */
     private void handleNotification(String expiryTime, String token) {
         try {
-            AppController.expiryTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(expiryTime);
+            AppController.expiryTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).parse(expiryTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }

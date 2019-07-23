@@ -21,7 +21,7 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        PROJECT_ID = getApplicationContext().getString(R.string.my_project_id);
+        PROJECT_ID = getApplicationContext().getString(R.string.gcp_project_id);
     }
 
     /**

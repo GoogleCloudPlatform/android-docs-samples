@@ -1,12 +1,12 @@
 package com.google.cloud.examples.dialogflow.adapter;
 
-import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.cloud.examples.dialogflow.R;
 import com.google.cloud.examples.dialogflow.model.ChatMsgModel;
@@ -34,7 +34,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final ChatMsgModel chatMsgModel = chatMsgModels.get(position);
 
-        if(chatMsgModel.getType()==1) { // Message Sent
+        if (chatMsgModel.getType() == 1) { // Message Sent
             holder.tvMsgSent.setText(chatMsgModel.getMsg());
             holder.tvMsgSent.setVisibility(View.VISIBLE);
             holder.tvMsgReceived.setVisibility(View.GONE);

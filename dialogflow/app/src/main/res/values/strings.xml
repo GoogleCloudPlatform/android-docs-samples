@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Dialogflow</string>
     <string name="default_notification_channel_id">ChannelId</string>
-    <string name="my_project_id">PROJECT_ID</string>
+    <string name="gcp_project_id">GCP_PROJECT_ID</string>
     <string name="sign_in_google">SIGN IN GOOGLE</string>
     <string name="sign_in_anonymously">SIGN IN ANONYMOUSLY</string>
     <string name="knowledge_connectors">Knowledge Connectors</string>

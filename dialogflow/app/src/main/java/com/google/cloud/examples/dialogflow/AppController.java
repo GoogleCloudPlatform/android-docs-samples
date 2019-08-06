@@ -29,7 +29,7 @@ public class AppController extends Application {
      */
     public static void callFirebaseFunction() {
         Map<String, String> data = new HashMap<>();
-        data.put("deviceId", AppController.firebaseInstanceId);
+        data.put("deviceID", AppController.firebaseInstanceId);
 
         FirebaseFunctions firebaseFunctions;
         firebaseFunctions = FirebaseFunctions.getInstance();

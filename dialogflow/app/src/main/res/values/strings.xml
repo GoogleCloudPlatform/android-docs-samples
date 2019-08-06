@@ -1,13 +1,15 @@
 <resources>
-    <string name="app_name">Dialogflow</string>
-    <string name="default_notification_channel_id">ChannelId</string>
-    <string name="gcp_project_id">GCP_PROJECT_ID</string>
-    <string name="sign_in_google">SIGN IN GOOGLE</string>
-    <string name="sign_in_anonymously">SIGN IN ANONYMOUSLY</string>
-    <string name="knowledge_connectors">Knowledge Connectors</string>
-    <string name="next">NEXT</string>
-    <string name="sentiment_analysis">Sentiment Analysis</string>
-    <string name="text_to_speech">Text to speech</string>
-    <string name="we_have_few_interesting_features_would_you_like_to_enable_them">We have few interesting features, Would you like to enable them!</string>
-    <string name="welcome_to_dialogflow">Welcome to Dialogflow</string>
+<string name="app_name">Dialogflow</string>
+<string name="default_notification_channel_id">ChannelId</string>
+<string name="gcp_project_id">GCP_PROJECT_ID</string>
+<string name="sign_in_google">SIGN IN GOOGLE</string>
+<string name="sign_in_anonymously">SIGN IN ANONYMOUSLY</string>
+<string name="knowledge_connectors">Knowledge Connectors</string>
+<string name="next">NEXT</string>
+<string name="sentiment_analysis">Sentiment Analysis</string>
+<string name="text_to_speech">Text to speech</string>
+<string name="we_have_few_interesting_features_would_you_like_to_enable_them">We have few interesting features, Would you like to enable them!</string>
+<string name="welcome_to_dialogflow">Welcome to Dialogflow</string>
+<string name="title_activity_main">MainActivity</string>
+<string name="mic">Mic</string>
 </resources>

@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -19,27 +22,20 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.cloud.examples.dialogflow.AppController;
 import com.google.cloud.examples.dialogflow.R;
 import com.google.cloud.examples.dialogflow.adapter.ChatRecyclerViewAdapter;
 import com.google.cloud.examples.dialogflow.model.ChatMsgModel;
 import com.google.cloud.examples.dialogflow.utils.ApiRequest;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
@@ -48,7 +44,6 @@ public class ChatActivity extends AppCompatActivity {
     private static ChatRecyclerViewAdapter chatRecyclerViewAdapter;
     private static ArrayList<ChatMsgModel> chatMsgModels;
     private static RecyclerView rvChats;
-    private FirebaseAuth firebaseAuth;
     private ApiRequest apiRequest;
 
     private EditText etMsg;
@@ -81,6 +76,7 @@ public class ChatActivity extends AppCompatActivity {
 
     /**
      * function to addMessage in the recyclerview
+     *
      * @param msg           : message to add
      * @param type          : Type of message (sent|received)
      * @param voiceFeedback : Whether to output response as voice
@@ -96,7 +92,8 @@ public class ChatActivity extends AppCompatActivity {
 
     /**
      * function to speak the message
-     * @param msg   :   message to speak
+     *
+     * @param msg :   message to speak
      */
     private static void voiceOutput(String msg) {
         textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null, null);
@@ -135,8 +132,8 @@ public class ChatActivity extends AppCompatActivity {
 
         checkPermissions();
 
-        signInAnonymously();
-        getFirebaseInstanceId();
+        AppController.signInAnonymously(this);
+        AppController.getFirebaseInstanceId();
 
         initViews();
         setupRecyclerView();
@@ -202,11 +199,11 @@ public class ChatActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkSignIn()) {
+                if (AppController.checkSignIn()) {
                     sendMsg(etMsg.getText().toString());
                     scrollToBottom();
                 } else {
-                    signInAnonymously();
+                    AppController.signInAnonymously(ChatActivity.this);
                 }
             }
         });
@@ -214,7 +211,7 @@ public class ChatActivity extends AppCompatActivity {
         btnMic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (checkSignIn()) {
+                if (AppController.checkSignIn()) {
                     promptSpeechInput();
                 }
             }
@@ -228,13 +225,6 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * function to check the user is logged in
-     * @return boolean  : returns true if user is logged inn
-     */
-    private boolean checkSignIn() {
-        return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
-    }
 
     /**
      * function to send the message
@@ -248,7 +238,7 @@ public class ChatActivity extends AppCompatActivity {
                 addMsg(msg, 1, false);
                 etMsg.setText("");
                 voiceInput = "";
-                apiRequest.callAPI(this, AppController.token, AppController.expiryTime, msg, tts, sentiment, knowledge);
+                new APIRequest(this, AppController.token, AppController.expiryTime, msg, tts, sentiment, knowledge).execute();
             } else {
                 // get new token if expired or not received
                 getNewToken();
@@ -343,37 +333,6 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private void getFirebaseInstanceId() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-            @Override
-            public void onSuccess(InstanceIdResult instanceIdResult) {
-                String deviceToken = instanceIdResult.getToken();
-                AppController.firebaseInstanceId = deviceToken;
-                Log.i("fcmId", deviceToken);
-            }
-        });
-    }
-
-    private void signInAnonymously() {
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signInAnonymously()
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(ChatActivity.this, "Sign In was successful",
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(ChatActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-    }
-
     public void showMorePopup() {
         PopupMenu popup = new PopupMenu(this, ibMore);
         popup.inflate(R.menu.main_menu);
@@ -405,6 +364,71 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
         popup.show();
+    }
+
+    private class APIRequest extends AsyncTask<Void, Void, String> {
+        private Context context;
+        private String token;
+        private Date expiryTime;
+        private String msg;
+        private boolean tts;
+        private boolean sentiment;
+        private boolean knowledge;
+
+        public APIRequest(Context context, String token, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
+            this.context = context;
+            this.token = token;
+            this.expiryTime = expiryTime;
+            this.msg = msg;
+            this.tts = tts;
+            this.sentiment = sentiment;
+            this.knowledge = knowledge;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+            disableInputPanel();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return apiRequest.callAPI(context, token, expiryTime, msg, tts, sentiment, knowledge);
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            alert.dismiss();
+            enableInputPanel();
+            addMsg(response, 0, tts);
+        }
+    }
+
+    /**
+     * disables the input panel (EditText, Mic, Send button)
+     */
+    private void disableInputPanel() {
+        etMsg.setEnabled(false);
+        btnMic.setEnabled(false);
+        btnSend.setEnabled(false);
+        etMsg.setBackgroundColor(Color.GRAY);
+        btnMic.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+        btnSend.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+    }
+
+    /**
+     * enables the input panel (EditText, Mic, Send button)
+     */
+    private void enableInputPanel() {
+        etMsg.setEnabled(true);
+        btnMic.setEnabled(true);
+        btnSend.setEnabled(true);
+        etMsg.setBackgroundColor(Color.TRANSPARENT);
+        btnMic.clearColorFilter();
+        btnSend.clearColorFilter();
+
     }
 
 }

@@ -1,8 +1,6 @@
 package com.google.cloud.examples.dialogflow.utils;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.api.gax.core.FixedCredentialsProvider;
@@ -12,7 +10,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.dialogflow.v2beta1.DetectIntentRequest;
 import com.google.cloud.dialogflow.v2beta1.DetectIntentResponse;
 import com.google.cloud.dialogflow.v2beta1.KnowledgeAnswers;
-import com.google.cloud.dialogflow.v2beta1.KnowledgeBaseName;
 import com.google.cloud.dialogflow.v2beta1.KnowledgeBasesSettings;
 import com.google.cloud.dialogflow.v2beta1.OutputAudioConfig;
 import com.google.cloud.dialogflow.v2beta1.OutputAudioEncoding;
@@ -37,7 +34,6 @@ public class ApiRequest {
 
     private String token = null;
     private Date tokenExpiration = null;
-    private String response = "";
 
     public ApiRequest() {
         // Variables needed to retrieve an auth token
@@ -55,17 +51,12 @@ public class ApiRequest {
      * @param tts         :   send message to text to speech if true
      * @param sentiment   :   send message to sentiment analysis if true
      * @param knowledge   :   send message to knowledge base if true
+     * @return            :   response from the server
      */
-    public void callAPI(Context context, String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
-        Toast.makeText(context, "Calling the API", Toast.LENGTH_SHORT).show();
-        response = "";
+    public String callAPI(Context context, String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
         this.token = accessToken;
         this.tokenExpiration = expiryTime;
-        getResults(msg, tts, sentiment, knowledge);
-    }
-
-    private void sendMsgToScreen(String response, boolean voiceFeedback) {
-        ChatActivity.addMsg(response, 0, voiceFeedback);
+        return detectIntent(msg, tts, sentiment, knowledge);
     }
 
     /**
@@ -75,8 +66,9 @@ public class ApiRequest {
      * @param tts       :   send message to text to speech if true
      * @param sentiment :   send message to sentiment analysis if true
      * @param knowledge :   send message to knowledge base if true
+     * @return            :   response from the server
      */
-    private void getResults(String msg, boolean tts, boolean sentiment, boolean knowledge) {
+    private String detectIntent(String msg, boolean tts, boolean sentiment, boolean knowledge) {
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
@@ -84,7 +76,6 @@ public class ApiRequest {
             SessionsSettings sessionsSettings = SessionsSettings.newBuilder().setCredentialsProvider(fixedCredentialsProvider).build();
             SessionsClient sessionsClient = SessionsClient.create(sessionsSettings);
             SessionName sessionName = SessionName.of(AppController.PROJECT_ID, AppController.SESSION_ID);
-            System.out.println("Session Path: " + sessionName.toString());
 
             // Set the text (hello) and language code (en-US) for the query
             TextInput textInput = TextInput.newBuilder()
@@ -98,57 +89,44 @@ public class ApiRequest {
                     .build();
 
             DetectIntentRequest detectIntentRequest = getDetectIntentRequest(sessionName, queryInput, tts, sentiment, knowledge, fixedCredentialsProvider);
-            if (detectIntentRequest != null) {
-                DetectIntentResponse detectIntentResponse = sessionsClient.detectIntent(detectIntentRequest);
-                // Display the query result
-                QueryResult queryResult = detectIntentResponse.getQueryResult();
-                StringBuilder knowledgebaseResponse = new StringBuilder();
-                String response;
+            DetectIntentResponse detectIntentResponse = sessionsClient.detectIntent(detectIntentRequest);
 
-                if (knowledge) {
-                    KnowledgeAnswers knowledgeAnswers = queryResult.getKnowledgeAnswers();
-                    for (KnowledgeAnswers.Answer answer : knowledgeAnswers.getAnswersList()) {
-                        knowledgebaseResponse.append(answer.getAnswer()).append("\n");
-                    }
-                }
+            sessionsClient.close();
 
-                if (sentiment) {
-                    response = queryResult.getFulfillmentText() + " (Magnitude " + queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getMagnitude() + "" + "; score: " + queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getScore() + ")";
-                } else {
-                    response = queryResult.getFulfillmentText();
-                }
-
-                prepareResult(response, knowledgebaseResponse.toString(), tts, sentiment, knowledge);
-            } else {
-                Log.i("ApiRequest", "DetectIntentRequest is null");
-            }
-
+            return handleResults(detectIntentResponse);
         } catch (Exception ex) {
             ex.printStackTrace();
+            return "";
         }
     }
 
     /**
-     * function to prepare the dialogflow response
-     *
-     * @param response              : response from tts|sentiment
-     * @param knowledgebaseResponse : response from knowledge base
-     * @param tts                   : if text to speech is true
-     * @param sentiment             : if sentiment analysis is true
-     * @param knowledge             : if knowledge base is true
+     * function to handle the results
+     * @param detectIntentResponse  :   detectIntentResponse object
+     * @return  :   String response
      */
-    private void prepareResult(String response, String knowledgebaseResponse, boolean tts, boolean sentiment, boolean knowledge) {
-        if (TextUtils.isEmpty(knowledgebaseResponse) && TextUtils.isEmpty(response)) {
-            sendMsgToScreen("No Response", tts);
-        } else if (!TextUtils.isEmpty(knowledgebaseResponse)) {
-            sendMsgToScreen(knowledgebaseResponse, tts);
-        } else if (tts || sentiment) {
-            sendMsgToScreen(response, tts);
-        } else if (!knowledge) {
-            sendMsgToScreen(response, tts);
-        } else {
-            sendMsgToScreen("No Response", tts);
+    private String handleResults(DetectIntentResponse detectIntentResponse) {
+        QueryResult queryResult = detectIntentResponse.getQueryResult();
+        StringBuilder response = new StringBuilder();
+
+        KnowledgeAnswers knowledgeAnswers = queryResult.getKnowledgeAnswers();
+        for (KnowledgeAnswers.Answer answer : knowledgeAnswers.getAnswersList()) {
+            response.append(answer.getAnswer()).append("\n");
         }
+
+        response.append(queryResult.getFulfillmentText());
+
+        if (queryResult.hasSentimentAnalysisResult()) {
+            String magnitude = String.format("(Magnitude: %s; ",
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getMagnitude());
+            response.append(magnitude);
+
+            String score = String.format("score: %s)",
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getScore());
+            response.append(score);
+        }
+
+        return response.toString();
     }
 
     /**
@@ -162,8 +140,15 @@ public class ApiRequest {
      * @param fixedCredentialsProvider : fixedCredentialsProvider for knowledgebase
      * @return : DetectIntentRequest object
      */
-    private DetectIntentRequest getDetectIntentRequest(SessionName sessionName, QueryInput queryInput, boolean tts, boolean sentiment, boolean knowledge, FixedCredentialsProvider fixedCredentialsProvider) {
-        try {
+    private DetectIntentRequest getDetectIntentRequest(SessionName sessionName, QueryInput queryInput, boolean tts, boolean sentiment, boolean knowledge, FixedCredentialsProvider fixedCredentialsProvider) throws Exception {
+        DetectIntentRequest detectIntentRequest = DetectIntentRequest.newBuilder()
+                .setSession(sessionName.toString())
+                .setQueryInput(queryInput)
+                .build();
+        QueryParameters queryParameters = QueryParameters.newBuilder().build();
+
+
+        if (tts) {
             OutputAudioEncoding audioEncoding = OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_LINEAR_16;
             int sampleRateHertz = 16000;
             OutputAudioConfig outputAudioConfig = OutputAudioConfig.newBuilder()
@@ -171,77 +156,38 @@ public class ApiRequest {
                     .setSampleRateHertz(sampleRateHertz)
                     .build();
 
+            detectIntentRequest.toBuilder()
+                    .setOutputAudioConfig(outputAudioConfig)
+                    .build();
+        }
+
+        if (sentiment) {
             SentimentAnalysisRequestConfig sentimentAnalysisRequestConfig = SentimentAnalysisRequestConfig.newBuilder().setAnalyzeQueryTextSentiment(true).build();
 
-            DetectIntentRequest detectIntentRequest;
-            KnowledgeBaseName knowledgeBaseName = null;
-
-            if (knowledge) {
-                KnowledgeBasesSettings knowledgeSessionsSettings = KnowledgeBasesSettings.newBuilder().setCredentialsProvider(fixedCredentialsProvider).build();
-                ArrayList<String> knowledgeBaseNames = KnowledgebaseUtils.listKnowledgeBases(AppController.PROJECT_ID, knowledgeSessionsSettings);
-                if (knowledgeBaseNames.size() > 0) {
-                    String knowledgebaseId = knowledgeBaseNames.get(0);
-                    knowledgebaseId = knowledgebaseId.substring(knowledgebaseId.lastIndexOf("/") + 1);
-                    knowledgeBaseName = KnowledgeBaseName.of(AppController.PROJECT_ID, knowledgebaseId);
-                }
-            }
-
-            if (tts && sentiment && knowledge && knowledgeBaseName != null) {
-                QueryParameters queryParameters = QueryParameters.newBuilder()
-                        .addKnowledgeBaseNames(knowledgeBaseName.toString())
-                        .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
-                        .build();
-                detectIntentRequest = DetectIntentRequest.newBuilder()
-                        .setSession(sessionName.toString())
-                        .setQueryInput(queryInput)
-                        .setQueryParams(queryParameters)
-                        .setOutputAudioConfig(outputAudioConfig)
-                        .build();
-            } else if (tts && sentiment) {
-                QueryParameters queryParameters = QueryParameters.newBuilder()
-                        .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
-                        .build();
-                detectIntentRequest = DetectIntentRequest.newBuilder()
-                        .setSession(sessionName.toString())
-                        .setQueryInput(queryInput)
-                        .setQueryParams(queryParameters)
-                        .setOutputAudioConfig(outputAudioConfig)
-                        .build();
-            } else if (tts) {
-                detectIntentRequest = DetectIntentRequest.newBuilder()
-                        .setSession(sessionName.toString())
-                        .setQueryInput(queryInput)
-                        .setOutputAudioConfig(outputAudioConfig)
-                        .build();
-            } else if (sentiment) {
-                QueryParameters queryParameters = QueryParameters.newBuilder()
-                        .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
-                        .build();
-                detectIntentRequest = DetectIntentRequest.newBuilder()
-                        .setSession(sessionName.toString())
-                        .setQueryInput(queryInput)
-                        .setQueryParams(queryParameters)
-                        .build();
-            } else if (knowledge) {
-                QueryParameters queryParameters = QueryParameters.newBuilder()
-                        .addKnowledgeBaseNames(knowledgeBaseName.toString())
-                        .build();
-                detectIntentRequest = DetectIntentRequest.newBuilder()
-                        .setSession(sessionName.toString())
-                        .setQueryInput(queryInput)
-                        .setQueryParams(queryParameters)
-                        .build();
-            } else {
-                detectIntentRequest = DetectIntentRequest.newBuilder()
-                        .setSession(sessionName.toString())
-                        .setQueryInput(queryInput)
-                        .build();
-            }
-
-            return detectIntentRequest;
-        } catch (Exception ex) {
-            return null;
+            queryParameters.toBuilder()
+                    .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
+                    .build();
+            detectIntentRequest.toBuilder()
+                    .setQueryParams(queryParameters)
+                    .build();
         }
+
+
+        if (knowledge) {
+            KnowledgeBasesSettings knowledgeSessionsSettings = KnowledgeBasesSettings.newBuilder().setCredentialsProvider(fixedCredentialsProvider).build();
+            ArrayList<String> knowledgeBaseNames = KnowledgeBaseUtils.listKnowledgeBases(AppController.PROJECT_ID, knowledgeSessionsSettings);
+            if (knowledgeBaseNames.size() > 0) {
+                // As an example, we'll only grab the first Knowledge Base
+                queryParameters.toBuilder()
+                        .addKnowledgeBaseNames(knowledgeBaseNames.get(0))
+                        .build();
+                detectIntentRequest.toBuilder()
+                        .setQueryParams(queryParameters)
+                        .build();
+            }
+        }
+
+        return detectIntentRequest;
     }
 }
 

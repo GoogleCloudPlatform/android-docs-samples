@@ -2,6 +2,9 @@ package com.google.cloud.examples.dialogflow;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.media.MediaPlayer;
+import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +19,10 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,19 +30,15 @@ import java.util.Map;
 public class AppController extends Application {
 
     public static final String TOKEN_RECEIVED = "TOKEN_RECEIVED";
-    public static String PROJECT_ID = "";
     public static final String SESSION_ID = "sessionId";
+    public static String PROJECT_ID = "";
     public static String firebaseInstanceId = "";
     public static FirebaseAuth firebaseAuth;
 
     public static String token = "";
     public static Date expiryTime;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        PROJECT_ID = getApplicationContext().getString(R.string.gcp_project_id);
-    }
+    public static Context context;
 
     /**
      * function to call the firebase function which will send the fcm message containing token and expiry time to the device
@@ -71,6 +74,7 @@ public class AppController extends Application {
 
     /**
      * function to check the user is logged in
+     *
      * @return boolean  : returns true if user is logged inn
      */
     public static boolean checkSignIn() {
@@ -88,5 +92,36 @@ public class AppController extends Application {
         });
     }
 
+    public static void playAudio(byte[] mp3SoundByteArray) {
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        try {
+            File tempMp3 = File.createTempFile("dialogFlow", "mp3", Environment.getExternalStorageDirectory());
+            tempMp3.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(tempMp3);
+            fos.write(mp3SoundByteArray);
+            fos.close();
+            mediaPlayer.reset();
+            FileInputStream fis = new FileInputStream(tempMp3);
+            mediaPlayer.setDataSource(fis.getFD());
+
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException ex) {
+            String s = ex.toString();
+            ex.printStackTrace();
+        }
+    }
+
+    public static boolean checkPreRequisites() {
+        return !PROJECT_ID.equals("GCP_PROJECT_ID");
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        context = getApplicationContext();
+        PROJECT_ID = getApplicationContext().getString(R.string.gcp_project_id);
+    }
 
 }

@@ -22,7 +22,6 @@ import com.google.cloud.dialogflow.v2beta1.SessionsClient;
 import com.google.cloud.dialogflow.v2beta1.SessionsSettings;
 import com.google.cloud.dialogflow.v2beta1.TextInput;
 import com.google.cloud.examples.dialogflow.AppController;
-import com.google.cloud.examples.dialogflow.ui.ChatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class ApiRequest {
     /**
      * function to call: detect Intent Sentiment Analysis | Detect Intent With TTS | KnowledgeBase
      *
-     * @param context     :   context
+     * @param context     :   context from the caller
      * @param accessToken :   access token received from fcm
      * @param expiryTime  :   expiry time received from fcm
      * @param msg         :   message sent by the user
@@ -56,19 +55,20 @@ public class ApiRequest {
     public String callAPI(Context context, String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
         this.token = accessToken;
         this.tokenExpiration = expiryTime;
-        return detectIntent(msg, tts, sentiment, knowledge);
+        return detectIntent(context, msg, tts, sentiment, knowledge);
     }
 
     /**
      * function to getting the results from the dialogflow
      *
+     * @param context   :   context from the caller
      * @param msg       :   message sent by the user
      * @param tts       :   send message to text to speech if true
      * @param sentiment :   send message to sentiment analysis if true
      * @param knowledge :   send message to knowledge base if true
-     * @return            :   response from the server
+     * @return          :   response from the server
      */
-    private String detectIntent(String msg, boolean tts, boolean sentiment, boolean knowledge) {
+    private String detectIntent(Context context, String msg, boolean tts, boolean sentiment, boolean knowledge) {
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
@@ -93,10 +93,15 @@ public class ApiRequest {
 
             sessionsClient.close();
 
+            if(tts) {
+                AppController.playAudio(detectIntentResponse.getOutputAudio().toByteArray());
+            }
+
             return handleResults(detectIntentResponse);
         } catch (Exception ex) {
             ex.printStackTrace();
-            return "";
+            Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
+            return null;
         }
     }
 

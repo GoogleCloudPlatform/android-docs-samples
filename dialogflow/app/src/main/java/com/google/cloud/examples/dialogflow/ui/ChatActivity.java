@@ -6,8 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +32,7 @@ import com.google.cloud.examples.dialogflow.adapter.ChatRecyclerViewAdapter;
 import com.google.cloud.examples.dialogflow.model.ChatMsgModel;
 import com.google.cloud.examples.dialogflow.utils.ApiRequest;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -77,26 +76,13 @@ public class ChatActivity extends AppCompatActivity {
     /**
      * function to addMessage in the recyclerview
      *
-     * @param msg           : message to add
-     * @param type          : Type of message (sent|received)
-     * @param voiceFeedback : Whether to output response as voice
+     * @param msg  : message to add
+     * @param type : Type of message (sent|received)
      */
-    public static void addMsg(String msg, int type, boolean voiceFeedback) {
+    private void addMsg(String msg, int type) {
         chatMsgModels.add(new ChatMsgModel(msg, type));
         chatRecyclerViewAdapter.notifyDataSetChanged();
         scrollToBottom();
-        if (voiceFeedback) {
-            voiceOutput(msg);
-        }
-    }
-
-    /**
-     * function to speak the message
-     *
-     * @param msg :   message to speak
-     */
-    private static void voiceOutput(String msg) {
-        textToSpeech.speak(msg, TextToSpeech.QUEUE_ADD, null, null);
     }
 
     /**
@@ -129,6 +115,12 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        if (!AppController.checkPreRequisites()) {
+            Toast.makeText(this, "Please update the GCP_PROJECT_ID in strings.xml", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         checkPermissions();
 
@@ -235,7 +227,7 @@ public class ChatActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(msg)) {
             // check if the token is received and expiry time is received and not expired
             if (AppController.expiryTime != null && !AppController.token.equals("") && AppController.expiryTime.getTime() > System.currentTimeMillis()) {
-                addMsg(msg, 1, false);
+                addMsg(msg, 1);
                 etMsg.setText("");
                 voiceInput = "";
                 new APIRequest(this, AppController.token, AppController.expiryTime, msg, tts, sentiment, knowledge).execute();
@@ -288,6 +280,8 @@ public class ChatActivity extends AppCompatActivity {
         ArrayList<String> arrPerm = new ArrayList<>();
         arrPerm.add(Manifest.permission.INTERNET);
         arrPerm.add(Manifest.permission.RECORD_AUDIO);
+        arrPerm.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        arrPerm.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
 
         if (!arrPerm.isEmpty()) {
@@ -389,7 +383,6 @@ public class ChatActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog();
-            disableInputPanel();
         }
 
         @Override
@@ -401,34 +394,10 @@ public class ChatActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
             alert.dismiss();
-            enableInputPanel();
-            addMsg(response, 0, tts);
+            if (response != null) {
+                addMsg(response, 0);
+            }
         }
-    }
-
-    /**
-     * disables the input panel (EditText, Mic, Send button)
-     */
-    private void disableInputPanel() {
-        etMsg.setEnabled(false);
-        btnMic.setEnabled(false);
-        btnSend.setEnabled(false);
-        etMsg.setBackgroundColor(Color.GRAY);
-        btnMic.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
-        btnSend.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
-    }
-
-    /**
-     * enables the input panel (EditText, Mic, Send button)
-     */
-    private void enableInputPanel() {
-        etMsg.setEnabled(true);
-        btnMic.setEnabled(true);
-        btnSend.setEnabled(true);
-        etMsg.setBackgroundColor(Color.TRANSPARENT);
-        btnMic.clearColorFilter();
-        btnSend.clearColorFilter();
-
     }
 
 }

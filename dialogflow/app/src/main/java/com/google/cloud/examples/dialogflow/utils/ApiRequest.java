@@ -36,14 +36,13 @@ public class ApiRequest {
 
     public ApiRequest() {
         // Variables needed to retrieve an auth token
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault());
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     /**
      * function to call: detect Intent Sentiment Analysis | Detect Intent With TTS | KnowledgeBase
      *
-     * @param context     :   context from the caller
      * @param accessToken :   access token received from fcm
      * @param expiryTime  :   expiry time received from fcm
      * @param msg         :   message sent by the user
@@ -52,23 +51,22 @@ public class ApiRequest {
      * @param knowledge   :   send message to knowledge base if true
      * @return            :   response from the server
      */
-    public String callAPI(Context context, String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
+    public String callAPI(String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
         this.token = accessToken;
         this.tokenExpiration = expiryTime;
-        return detectIntent(context, msg, tts, sentiment, knowledge);
+        return detectIntent(msg, tts, sentiment, knowledge);
     }
 
     /**
      * function to getting the results from the dialogflow
      *
-     * @param context   :   context from the caller
      * @param msg       :   message sent by the user
      * @param tts       :   send message to text to speech if true
      * @param sentiment :   send message to sentiment analysis if true
      * @param knowledge :   send message to knowledge base if true
      * @return          :   response from the server
      */
-    private String detectIntent(Context context, String msg, boolean tts, boolean sentiment, boolean knowledge) {
+    private String detectIntent(String msg, boolean tts, boolean sentiment, boolean knowledge) {
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
@@ -100,8 +98,7 @@ public class ApiRequest {
             return handleResults(detectIntentResponse);
         } catch (Exception ex) {
             ex.printStackTrace();
-            Toast.makeText(context, ex.getMessage(), Toast.LENGTH_SHORT).show();
-            return null;
+            return ex.getMessage();
         }
     }
 

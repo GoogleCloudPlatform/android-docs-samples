@@ -32,7 +32,6 @@ import com.google.cloud.examples.dialogflow.adapter.ChatRecyclerViewAdapter;
 import com.google.cloud.examples.dialogflow.model.ChatMsgModel;
 import com.google.cloud.examples.dialogflow.utils.ApiRequest;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
@@ -74,18 +73,6 @@ public class ChatActivity extends AppCompatActivity {
     };
 
     /**
-     * function to addMessage in the recyclerview
-     *
-     * @param msg  : message to add
-     * @param type : Type of message (sent|received)
-     */
-    private void addMsg(String msg, int type) {
-        chatMsgModels.add(new ChatMsgModel(msg, type));
-        chatRecyclerViewAdapter.notifyDataSetChanged();
-        scrollToBottom();
-    }
-
-    /**
      * function to scroll the recyclerview at the bottom after each message sent or received
      */
     private static void scrollToBottom() {
@@ -97,6 +84,18 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * function to addMessage in the recyclerview
+     *
+     * @param msg  : message to add
+     * @param type : Type of message (sent|received)
+     */
+    private void addMsg(String msg, int type) {
+        chatMsgModels.add(new ChatMsgModel(msg, type));
+        chatRecyclerViewAdapter.notifyDataSetChanged();
+        scrollToBottom();
     }
 
     /**
@@ -116,7 +115,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        if (!AppController.checkPreRequisites()) {
+        if (AppController.PROJECT_ID.equals("GCP_PROJECT_ID")) {
             Toast.makeText(this, "Please update the GCP_PROJECT_ID in strings.xml", Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -230,7 +229,7 @@ public class ChatActivity extends AppCompatActivity {
                 addMsg(msg, 1);
                 etMsg.setText("");
                 voiceInput = "";
-                new APIRequest(this, AppController.token, AppController.expiryTime, msg, tts, sentiment, knowledge).execute();
+                new APIRequest(AppController.token, AppController.expiryTime, msg, tts, sentiment, knowledge).execute();
             } else {
                 // get new token if expired or not received
                 getNewToken();
@@ -361,7 +360,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private class APIRequest extends AsyncTask<Void, Void, String> {
-        private Context context;
         private String token;
         private Date expiryTime;
         private String msg;
@@ -369,8 +367,7 @@ public class ChatActivity extends AppCompatActivity {
         private boolean sentiment;
         private boolean knowledge;
 
-        public APIRequest(Context context, String token, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
-            this.context = context;
+        public APIRequest(String token, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
             this.token = token;
             this.expiryTime = expiryTime;
             this.msg = msg;
@@ -387,16 +384,14 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... voids) {
-            return apiRequest.callAPI(context, token, expiryTime, msg, tts, sentiment, knowledge);
+            return apiRequest.callAPI(token, expiryTime, msg, tts, sentiment, knowledge);
         }
 
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
             alert.dismiss();
-            if (response != null) {
-                addMsg(response, 0);
-            }
+            addMsg(response, 0);
         }
     }
 

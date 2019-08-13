@@ -112,11 +112,6 @@ public class AppController extends Application {
         }
     }
 
-    public static boolean checkPreRequisites() {
-        return !PROJECT_ID.equals("GCP_PROJECT_ID");
-    }
-
-
     @Override
     public void onCreate() {
         super.onCreate();

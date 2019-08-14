@@ -31,6 +31,7 @@ import com.google.cloud.examples.dialogflow.R;
 import com.google.cloud.examples.dialogflow.adapter.ChatRecyclerViewAdapter;
 import com.google.cloud.examples.dialogflow.model.ChatMsgModel;
 import com.google.cloud.examples.dialogflow.utils.ApiRequest;
+import com.google.cloud.examples.dialogflow.utils.AuthUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -123,8 +124,8 @@ public class ChatActivity extends AppCompatActivity {
 
         checkPermissions();
 
-        AppController.signInAnonymously(this);
-        AppController.getFirebaseInstanceId();
+        AuthUtils.signInAnonymously(this);
+        AuthUtils.getFirebaseInstanceId();
 
         initViews();
         setupRecyclerView();
@@ -190,11 +191,11 @@ public class ChatActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (AppController.checkSignIn()) {
+                if (AuthUtils.checkSignIn()) {
                     sendMsg(etMsg.getText().toString());
                     scrollToBottom();
                 } else {
-                    AppController.signInAnonymously(ChatActivity.this);
+                    AuthUtils.signInAnonymously(ChatActivity.this);
                 }
             }
         });
@@ -202,7 +203,7 @@ public class ChatActivity extends AppCompatActivity {
         btnMic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (AppController.checkSignIn()) {
+                if (AuthUtils.checkSignIn()) {
                     promptSpeechInput();
                 }
             }
@@ -225,11 +226,11 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMsg(String msg) {
         if (!TextUtils.isEmpty(msg)) {
             // check if the token is received and expiry time is received and not expired
-            if (AppController.expiryTime != null && !AppController.token.equals("") && AppController.expiryTime.getTime() > System.currentTimeMillis()) {
+            if (AuthUtils.expiryTime != null && !AuthUtils.token.equals("") && AuthUtils.expiryTime.getTime() > System.currentTimeMillis()) {
                 addMsg(msg, 1);
                 etMsg.setText("");
                 voiceInput = "";
-                new APIRequest(AppController.token, AppController.expiryTime, msg, tts, sentiment, knowledge).execute();
+                new APIRequest(AuthUtils.token, AuthUtils.expiryTime, msg, tts, sentiment, knowledge).execute();
             } else {
                 // get new token if expired or not received
                 getNewToken();
@@ -241,7 +242,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void getNewToken() {
         showProgressDialog();
-        AppController.callFirebaseFunction();
+        AuthUtils.callFirebaseFunction();
     }
 
     private void promptSpeechInput() {

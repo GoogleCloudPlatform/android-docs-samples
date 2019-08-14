@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.cloud.examples.dialogflow.AppController;
+import com.google.cloud.examples.dialogflow.utils.AuthUtils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -34,11 +35,11 @@ public class MyFirebaseCloudMessagingService extends FirebaseMessagingService {
      */
     private void handleNotification(String expiryTime, String token) {
         try {
-            AppController.expiryTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).parse(expiryTime);
+            AuthUtils.expiryTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).parse(expiryTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        AppController.token = token;
+        AuthUtils.token = token;
 
         Intent intent = new Intent(AppController.TOKEN_RECEIVED);
         sendBroadcast(intent);

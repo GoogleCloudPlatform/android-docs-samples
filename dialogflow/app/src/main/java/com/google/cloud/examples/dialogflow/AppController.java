@@ -15,22 +15,21 @@ public class AppController extends Application {
     public static final String SESSION_ID = "sessionId";
     public static String PROJECT_ID = "";
 
-    public static void playAudio(byte[] mp3SoundByteArray) {
+    public static void playAudio(byte[] byteArray) {
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
-            File tempMp3 = File.createTempFile("dialogFlow", "mp3", Environment.getExternalStorageDirectory());
-            tempMp3.deleteOnExit();
-            FileOutputStream fos = new FileOutputStream(tempMp3);
-            fos.write(mp3SoundByteArray);
+            File tempFile = File.createTempFile("dialogFlow", null, Environment.getExternalStorageDirectory());
+            tempFile.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            fos.write(byteArray);
             fos.close();
             mediaPlayer.reset();
-            FileInputStream fis = new FileInputStream(tempMp3);
+            FileInputStream fis = new FileInputStream(tempFile);
             mediaPlayer.setDataSource(fis.getFD());
 
             mediaPlayer.prepare();
             mediaPlayer.start();
         } catch (IOException ex) {
-            String s = ex.toString();
             ex.printStackTrace();
         }
     }

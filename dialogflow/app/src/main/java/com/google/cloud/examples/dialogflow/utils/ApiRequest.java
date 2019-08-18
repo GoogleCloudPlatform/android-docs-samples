@@ -1,8 +1,5 @@
 package com.google.cloud.examples.dialogflow.utils;
 
-import android.content.Context;
-import android.widget.Toast;
-
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
@@ -49,7 +46,7 @@ public class ApiRequest {
      * @param tts         :   send message to text to speech if true
      * @param sentiment   :   send message to sentiment analysis if true
      * @param knowledge   :   send message to knowledge base if true
-     * @return            :   response from the server
+     * @return :   response from the server
      */
     public String callAPI(String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
         this.token = accessToken;
@@ -64,7 +61,7 @@ public class ApiRequest {
      * @param tts       :   send message to text to speech if true
      * @param sentiment :   send message to sentiment analysis if true
      * @param knowledge :   send message to knowledge base if true
-     * @return          :   response from the server
+     * @return :   response from the server
      */
     private String detectIntent(String msg, boolean tts, boolean sentiment, boolean knowledge) {
         try {
@@ -91,7 +88,7 @@ public class ApiRequest {
 
             sessionsClient.close();
 
-            if(tts) {
+            if (tts) {
                 AppController.playAudio(detectIntentResponse.getOutputAudio().toByteArray());
             }
 
@@ -104,8 +101,9 @@ public class ApiRequest {
 
     /**
      * function to handle the results
-     * @param detectIntentResponse  :   detectIntentResponse object
-     * @return  :   String response
+     *
+     * @param detectIntentResponse :   detectIntentResponse object
+     * @return :   String response
      */
     private String handleResults(DetectIntentResponse detectIntentResponse) {
         QueryResult queryResult = detectIntentResponse.getQueryResult();
@@ -143,54 +141,52 @@ public class ApiRequest {
      * @return : DetectIntentRequest object
      */
     private DetectIntentRequest getDetectIntentRequest(SessionName sessionName, QueryInput queryInput, boolean tts, boolean sentiment, boolean knowledge, FixedCredentialsProvider fixedCredentialsProvider) throws Exception {
-        DetectIntentRequest detectIntentRequest = DetectIntentRequest.newBuilder()
+        DetectIntentRequest.Builder detectIntentRequestBuilder = DetectIntentRequest.newBuilder()
                 .setSession(sessionName.toString())
-                .setQueryInput(queryInput)
-                .build();
-        QueryParameters queryParameters = QueryParameters.newBuilder().build();
+                .setQueryInput(queryInput);
 
+        QueryParameters.Builder queryParametersBuilder = QueryParameters.newBuilder();
 
         if (tts) {
-            OutputAudioEncoding audioEncoding = OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_LINEAR_16;
+            OutputAudioEncoding audioEncoding = OutputAudioEncoding.OUTPUT_AUDIO_ENCODING_MP3;
             int sampleRateHertz = 16000;
             OutputAudioConfig outputAudioConfig = OutputAudioConfig.newBuilder()
                     .setAudioEncoding(audioEncoding)
                     .setSampleRateHertz(sampleRateHertz)
                     .build();
 
-            detectIntentRequest.toBuilder()
-                    .setOutputAudioConfig(outputAudioConfig)
-                    .build();
+            detectIntentRequestBuilder.setOutputAudioConfig(outputAudioConfig);
         }
 
         if (sentiment) {
-            SentimentAnalysisRequestConfig sentimentAnalysisRequestConfig = SentimentAnalysisRequestConfig.newBuilder().setAnalyzeQueryTextSentiment(true).build();
+            SentimentAnalysisRequestConfig sentimentAnalysisRequestConfig =
+                    SentimentAnalysisRequestConfig.newBuilder()
+                            .setAnalyzeQueryTextSentiment(true).build();
 
-            queryParameters.toBuilder()
-                    .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig)
-                    .build();
-            detectIntentRequest.toBuilder()
-                    .setQueryParams(queryParameters)
-                    .build();
+            queryParametersBuilder
+                    .setSentimentAnalysisRequestConfig(sentimentAnalysisRequestConfig);
         }
 
 
         if (knowledge) {
-            KnowledgeBasesSettings knowledgeSessionsSettings = KnowledgeBasesSettings.newBuilder().setCredentialsProvider(fixedCredentialsProvider).build();
-            ArrayList<String> knowledgeBaseNames = KnowledgeBaseUtils.listKnowledgeBases(AppController.PROJECT_ID, knowledgeSessionsSettings);
+            KnowledgeBasesSettings knowledgeSessionsSettings = KnowledgeBasesSettings.newBuilder()
+                    .setCredentialsProvider(fixedCredentialsProvider).build();
+            ArrayList<String> knowledgeBaseNames =
+                    KnowledgeBaseUtils.listKnowledgeBases(
+                            AppController.PROJECT_ID, knowledgeSessionsSettings);
+
             if (knowledgeBaseNames.size() > 0) {
                 // As an example, we'll only grab the first Knowledge Base
-                queryParameters.toBuilder()
-                        .addKnowledgeBaseNames(knowledgeBaseNames.get(0))
-                        .build();
-                detectIntentRequest.toBuilder()
-                        .setQueryParams(queryParameters)
-                        .build();
+                queryParametersBuilder.addKnowledgeBaseNames(knowledgeBaseNames.get(0));
             }
         }
 
-        return detectIntentRequest;
+        QueryParameters queryParameters = queryParametersBuilder.build();
+        detectIntentRequestBuilder.setQueryParams(queryParameters);
+
+        return detectIntentRequestBuilder.build();
     }
+
 }
 
 

@@ -10,9 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
-import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -35,11 +33,9 @@ import com.google.cloud.examples.dialogflow.utils.AuthUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
 
-    private static TextToSpeech textToSpeech;
     private static ChatRecyclerViewAdapter chatRecyclerViewAdapter;
     private static ArrayList<ChatMsgModel> chatMsgModels;
     private static RecyclerView rvChats;
@@ -132,33 +128,6 @@ public class ChatActivity extends AppCompatActivity {
         initListeners();
 
         apiRequest = new ApiRequest();
-
-        initTextToSpeech();
-
-    }
-
-    /**
-     * function to initialize the Text To Speech for voice output
-     */
-    private void initTextToSpeech() {
-        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int ttsLang = textToSpeech.setLanguage(Locale.US);
-
-                    if (ttsLang == TextToSpeech.LANG_MISSING_DATA
-                            || ttsLang == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("TTS", "The Language is not supported!");
-                    } else {
-                        Log.i("TTS", "Language Supported.");
-                    }
-                    Log.i("TTS", "Initialization success.");
-                } else {
-                    Toast.makeText(getApplicationContext(), "TTS Initialization failed!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
     }
 
@@ -318,15 +287,6 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-        }
-    }
-
     public void showMorePopup() {
         PopupMenu popup = new PopupMenu(this, ibMore);
         popup.inflate(R.menu.main_menu);
@@ -380,7 +340,6 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog();
         }
 
         @Override
@@ -391,7 +350,6 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
-            alert.dismiss();
             addMsg(response, 0);
         }
     }

@@ -24,8 +24,8 @@ To call the Dialogflow API from Android, you need to get authorization tokens fr
 - [Import the Dialogflow Agent](https://dialogflow.com/docs/agents/export-import-restore#import) using the `StopwatchAgent.zip` which is located in the `stopwatch` directory. 
 - [Create a Service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with the following IAM role: `Dialogflow API Client`. Example name: `dialogflow-client`. ([For more info on: how to add roles to a Service Account](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource))
 - Under Dialogflow-client, Click on edit permission icon on the right and add another role as follows and save the changes:
-  - Dialogflow Client
-  - Dialogflow Reader
+  - Dialogflow Client (Used by the app to make detect intent requests)
+  - Dialogflow Reader (Used by the app to list knowledge bases)
 - Enable beta features for:
   - [Sentiment Analysis](https://cloud.google.com/dialogflow-enterprise/docs/sentiment#enable_beta_features)
   - [Text-to-Speech](https://cloud.google.com/dialogflow-enterprise/docs/detect-intent-tts#enable_beta_features)

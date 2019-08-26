@@ -188,7 +188,7 @@ public class ApiRequest {
             KnowledgeBasesSettings knowledgeSessionsSettings = KnowledgeBasesSettings.newBuilder()
                     .setCredentialsProvider(fixedCredentialsProvider).build();
             ArrayList<String> knowledgeBaseNames =
-                    KnowledgeBaseUtils123.listKnowledgeBases(
+                    KnowledgeBaseUtils.listKnowledgeBases(
                             AppController.PROJECT_ID, knowledgeSessionsSettings);
 
             if (knowledgeBaseNames.size() > 0) {

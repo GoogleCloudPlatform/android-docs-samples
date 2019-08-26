@@ -24,7 +24,7 @@ import com.google.cloud.dialogflow.v2beta1.ProjectName;
 
 import java.util.ArrayList;
 
-public class KnowledgeBaseUtils123 {
+public class KnowledgeBaseUtils {
 
     /**
      * List Knowledge bases

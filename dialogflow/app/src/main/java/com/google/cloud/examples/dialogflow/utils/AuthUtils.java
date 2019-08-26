@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.cloud.examples.dialogflow.utils;
 
 import android.app.Activity;
@@ -15,14 +31,21 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class AuthUtils {
 
-    public static String firebaseInstanceId = "";
-    public static FirebaseAuth firebaseAuth;
+    private static String firebaseInstanceId = "";
+    private static FirebaseAuth firebaseAuth;
 
     public static String token = "";
     public static Date expiryTime;
@@ -39,6 +62,40 @@ public class AuthUtils {
                 .call(data);
     }
 
+    /**
+     * function to store the token expiry time
+     * @param expiryTime    :   expiry time in UTC timezone
+     */
+    public static void setExpiryTime(String expiryTime) {
+            AuthUtils.expiryTime = getConvertedDateTime(expiryTime);
+    }
+
+    /**
+     * function to convert the time from UTC to local TimeZone
+     * @param expiryTime    :   expiry time in UTC timezone
+     * @return  Date        :   converted datetime to local timezonne
+     */
+    private static Date getConvertedDateTime(String expiryTime) {
+        try {
+            final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+            DateTimeFormatter format = DateTimeFormatter.ofPattern(DATE_FORMAT);
+            LocalDateTime ldt = LocalDateTime.parse(expiryTime, format);
+            ZoneId fromZoneId = ZoneId.of(TimeZone.getTimeZone("UTC").getID());
+            ZonedDateTime fromZoneDateTime = ldt.atZone(fromZoneId);
+            ZoneId currentZoneId = TimeZone.getDefault().toZoneId();
+            ZonedDateTime zonedDateTime = fromZoneDateTime.withZoneSameInstant(currentZoneId);
+            return new SimpleDateFormat(DATE_FORMAT, Locale.US).parse(format.format(zonedDateTime));
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * function to signin to Firebase Anonymously
+     * @param activity  :   Instance of the Activity
+     */
     public static void signInAnonymously(final Activity activity) {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signInAnonymously()
@@ -68,6 +125,9 @@ public class AuthUtils {
         return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
     }
 
+    /**
+     * function to get the firebase instance id
+     */
     public static void getFirebaseInstanceId() {
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
             @Override
@@ -77,6 +137,14 @@ public class AuthUtils {
                 Log.i("fcmId", deviceToken);
             }
         });
+    }
+
+    /**
+     * function to check if the token is valid
+     * @return  boolean :   indicates the status of the signin
+     */
+    public static boolean isTokenValid() {
+        return AuthUtils.expiryTime != null && !AuthUtils.token.equals("") && AuthUtils.expiryTime.getTime() > System.currentTimeMillis();
     }
 
 }

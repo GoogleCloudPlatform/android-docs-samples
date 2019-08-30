@@ -31,10 +31,13 @@ public class KnowledgeBaseUtils {
      *
      * @param projectId Project/agent id.
      */
-    public static ArrayList<String> listKnowledgeBases(String projectId, KnowledgeBasesSettings knowledgeBasesSettings) throws Exception {
+    public static ArrayList<String> listKnowledgeBases(String projectId,
+                                                       KnowledgeBasesSettings knowledgeBasesSettings)
+            throws Exception {
         ArrayList<String> ids = new ArrayList<>();
         // Instantiates a client
-        try (KnowledgeBasesClient knowledgeBasesClient = KnowledgeBasesClient.create(knowledgeBasesSettings)) {
+        try (KnowledgeBasesClient knowledgeBasesClient =
+                     KnowledgeBasesClient.create(knowledgeBasesSettings)) {
             ProjectName projectName = ProjectName.of(projectId);
             for (KnowledgeBase knowledgeBase :
                     knowledgeBasesClient.listKnowledgeBases(projectName).iterateAll()) {

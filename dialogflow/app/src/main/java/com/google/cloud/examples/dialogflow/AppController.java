@@ -34,7 +34,8 @@ public class AppController extends Application {
     public static void playAudio(byte[] byteArray) {
         MediaPlayer mediaPlayer = new MediaPlayer();
         try {
-            File tempFile = File.createTempFile("dialogFlow", null, Environment.getExternalStorageDirectory());
+            File tempFile = File.createTempFile("dialogFlow", null,
+                    Environment.getExternalStorageDirectory());
             tempFile.deleteOnExit();
             FileOutputStream fos = new FileOutputStream(tempFile);
             fos.write(byteArray);

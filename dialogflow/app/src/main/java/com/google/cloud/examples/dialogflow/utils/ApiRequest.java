@@ -35,7 +35,6 @@ import com.google.cloud.dialogflow.v2beta1.SessionsClient;
 import com.google.cloud.dialogflow.v2beta1.SessionsSettings;
 import com.google.cloud.dialogflow.v2beta1.TextInput;
 import com.google.cloud.examples.dialogflow.AppController;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,7 +48,8 @@ public class ApiRequest {
 
     public ApiRequest() {
         // Variables needed to retrieve an auth token
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", java.util.Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",
+                java.util.Locale.getDefault());
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
@@ -64,7 +64,8 @@ public class ApiRequest {
      * @param knowledge   :   send message to knowledge base if true
      * @return :   response from the server
      */
-    public String callAPI(String accessToken, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
+    public String callAPI(String accessToken, Date expiryTime, String msg, boolean tts,
+                          boolean sentiment, boolean knowledge) {
         this.token = accessToken;
         this.tokenExpiration = expiryTime;
         return detectIntent(msg, tts, sentiment, knowledge);
@@ -83,10 +84,13 @@ public class ApiRequest {
         try {
             AccessToken accessToken = new AccessToken(token, tokenExpiration);
             Credentials credentials = GoogleCredentials.create(accessToken);
-            FixedCredentialsProvider fixedCredentialsProvider = FixedCredentialsProvider.create(credentials);
-            SessionsSettings sessionsSettings = SessionsSettings.newBuilder().setCredentialsProvider(fixedCredentialsProvider).build();
+            FixedCredentialsProvider fixedCredentialsProvider =
+                    FixedCredentialsProvider.create(credentials);
+            SessionsSettings sessionsSettings = SessionsSettings.newBuilder()
+                    .setCredentialsProvider(fixedCredentialsProvider).build();
             SessionsClient sessionsClient = SessionsClient.create(sessionsSettings);
-            SessionName sessionName = SessionName.of(AppController.PROJECT_ID, AppController.SESSION_ID);
+            SessionName sessionName = SessionName.of(AppController.PROJECT_ID,
+                    AppController.SESSION_ID);
 
             // Set the text (hello) and language code (en-US) for the query
             TextInput textInput = TextInput.newBuilder()
@@ -99,8 +103,10 @@ public class ApiRequest {
                     .setText(textInput)
                     .build();
 
-            DetectIntentRequest detectIntentRequest = getDetectIntentRequest(sessionName, queryInput, tts, sentiment, knowledge, fixedCredentialsProvider);
-            DetectIntentResponse detectIntentResponse = sessionsClient.detectIntent(detectIntentRequest);
+            DetectIntentRequest detectIntentRequest = getDetectIntentRequest(sessionName,
+                    queryInput, tts, sentiment, knowledge, fixedCredentialsProvider);
+            DetectIntentResponse detectIntentResponse =
+                    sessionsClient.detectIntent(detectIntentRequest);
 
             sessionsClient.close();
 
@@ -134,11 +140,13 @@ public class ApiRequest {
 
         if (queryResult.hasSentimentAnalysisResult()) {
             String magnitude = String.format("(Magnitude: %s; ",
-                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getMagnitude());
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
+                            .getMagnitude());
             response.append(magnitude);
 
             String score = String.format("score: %s)",
-                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getScore());
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
+                            .getScore());
             response.append(score);
         }
 
@@ -156,7 +164,11 @@ public class ApiRequest {
      * @param fixedCredentialsProvider : fixedCredentialsProvider for knowledgebase
      * @return : DetectIntentRequest object
      */
-    private DetectIntentRequest getDetectIntentRequest(SessionName sessionName, QueryInput queryInput, boolean tts, boolean sentiment, boolean knowledge, FixedCredentialsProvider fixedCredentialsProvider) throws Exception {
+    private DetectIntentRequest getDetectIntentRequest(SessionName sessionName,
+                                                       QueryInput queryInput, boolean tts,
+                                                       boolean sentiment, boolean knowledge,
+                                                       FixedCredentialsProvider fixedCredentialsProvider)
+            throws Exception {
         DetectIntentRequest.Builder detectIntentRequestBuilder = DetectIntentRequest.newBuilder()
                 .setSession(sessionName.toString())
                 .setQueryInput(queryInput);
@@ -202,7 +214,6 @@ public class ApiRequest {
 
         return detectIntentRequestBuilder.build();
     }
-
 }
 
 

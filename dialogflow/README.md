@@ -47,7 +47,7 @@ The Firebase Function provides auth tokens to your app, You'll be using a provid
 - Follow the steps in this [guide](https://firebase.google.com/docs/functions/get-started) for: 
   - "1. Set up Node.js and the Firebase CLI"
   - "2. Initialize Firebase SDK for Cloud Functions". 
-- Replace `index.js` file with the [provided index.js](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/functions/dialogflow/functions/index.js).
+- Replace `index.js` file with the [provided index.js](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/functions/tokenservice/functions/index.js).
 - Open `index.js`, go to function "generateAccessToken", and replace “SERVICE-ACCOUNT-NAME@YOUR_PROJECT_ID.iam.gserviceaccount.com” with your Service account name (`dialogflow-client`) and project id. 
 - Deploy getOAuthToken method by running command:
 ```

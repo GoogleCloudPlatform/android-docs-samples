@@ -51,7 +51,8 @@ public class AuthUtils {
     public static Date expiryTime;
 
     /**
-     * function to call the firebase function which will send the fcm message containing token and expiry time to the device
+     * function to call the firebase function which will send the fcm message containing token and
+     * expiry time to the device
      */
     public static void callFirebaseFunction() {
         Map<String, String> data = new HashMap<>();
@@ -129,7 +130,8 @@ public class AuthUtils {
      * function to get the firebase instance id
      */
     public static void getFirebaseInstanceId() {
-        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
+                new OnSuccessListener<InstanceIdResult>() {
             @Override
             public void onSuccess(InstanceIdResult instanceIdResult) {
                 String deviceToken = instanceIdResult.getToken();
@@ -144,7 +146,8 @@ public class AuthUtils {
      * @return  boolean :   indicates the status of the signin
      */
     public static boolean isTokenValid() {
-        return AuthUtils.expiryTime != null && !AuthUtils.token.equals("") && AuthUtils.expiryTime.getTime() > System.currentTimeMillis();
+        return AuthUtils.expiryTime != null && !AuthUtils.token.equals("")
+                && AuthUtils.expiryTime.getTime() > System.currentTimeMillis();
     }
 
 }

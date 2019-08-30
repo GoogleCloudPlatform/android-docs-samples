@@ -129,7 +129,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         if (AppController.PROJECT_ID.equals("GCP_PROJECT_ID")) {
-            Toast.makeText(this, "Please update the GCP_PROJECT_ID in strings.xml", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please update the GCP_PROJECT_ID in strings.xml",
+                    Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -215,13 +216,15 @@ public class ChatActivity extends AppCompatActivity {
                 addMsg(msg, 1);
                 etMsg.setText("");
                 voiceInput = "";
-                new APIRequest(AuthUtils.token, AuthUtils.expiryTime, msg, tts, sentiment, knowledge).execute();
+                new APIRequest(AuthUtils.token, AuthUtils.expiryTime, msg, tts, sentiment,
+                        knowledge).execute();
             } else {
                 // get new token if expired or not received
                 getNewToken();
             }
         } else {
-            Toast.makeText(this, "Please enter or say some message to send.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter or say some message to send.",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -344,7 +347,8 @@ public class ChatActivity extends AppCompatActivity {
         private boolean sentiment;
         private boolean knowledge;
 
-        public APIRequest(String token, Date expiryTime, String msg, boolean tts, boolean sentiment, boolean knowledge) {
+        public APIRequest(String token, Date expiryTime, String msg, boolean tts, boolean sentiment,
+                          boolean knowledge) {
             this.token = token;
             this.expiryTime = expiryTime;
             this.msg = msg;

@@ -105,6 +105,7 @@ public class ApiRequest {
 
             DetectIntentRequest detectIntentRequest = getDetectIntentRequest(sessionName,
                     queryInput, tts, sentiment, knowledge, fixedCredentialsProvider);
+
             DetectIntentResponse detectIntentResponse =
                     sessionsClient.detectIntent(detectIntentRequest);
 
@@ -122,38 +123,6 @@ public class ApiRequest {
     }
 
     /**
-     * function to handle the results
-     *
-     * @param detectIntentResponse :   detectIntentResponse object
-     * @return :   String response
-     */
-    private String handleResults(DetectIntentResponse detectIntentResponse) {
-        QueryResult queryResult = detectIntentResponse.getQueryResult();
-        StringBuilder response = new StringBuilder();
-
-        KnowledgeAnswers knowledgeAnswers = queryResult.getKnowledgeAnswers();
-        for (KnowledgeAnswers.Answer answer : knowledgeAnswers.getAnswersList()) {
-            response.append(answer.getAnswer()).append("\n");
-        }
-
-        response.append(queryResult.getFulfillmentText());
-
-        if (queryResult.hasSentimentAnalysisResult()) {
-            String magnitude = String.format("(Magnitude: %s; ",
-                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
-                            .getMagnitude());
-            response.append(magnitude);
-
-            String score = String.format("score: %s)",
-                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
-                            .getScore());
-            response.append(score);
-        }
-
-        return response.toString();
-    }
-
-    /**
      * function to get the DetectIntentRequest object
      *
      * @param sessionName              : sessionName object
@@ -165,10 +134,9 @@ public class ApiRequest {
      * @return : DetectIntentRequest object
      */
     private DetectIntentRequest getDetectIntentRequest(SessionName sessionName,
-                                                       QueryInput queryInput, boolean tts,
-                                                       boolean sentiment, boolean knowledge,
-                                                       FixedCredentialsProvider fixedCredentialsProvider)
-            throws Exception {
+            QueryInput queryInput, boolean tts, boolean sentiment, boolean knowledge,
+            FixedCredentialsProvider fixedCredentialsProvider) throws Exception {
+
         DetectIntentRequest.Builder detectIntentRequestBuilder = DetectIntentRequest.newBuilder()
                 .setSession(sessionName.toString())
                 .setQueryInput(queryInput);
@@ -213,6 +181,38 @@ public class ApiRequest {
         detectIntentRequestBuilder.setQueryParams(queryParameters);
 
         return detectIntentRequestBuilder.build();
+    }
+
+    /**
+     * function to handle the results
+     *
+     * @param detectIntentResponse :   detectIntentResponse object
+     * @return :   String response
+     */
+    private String handleResults(DetectIntentResponse detectIntentResponse) {
+        QueryResult queryResult = detectIntentResponse.getQueryResult();
+        StringBuilder response = new StringBuilder();
+
+        KnowledgeAnswers knowledgeAnswers = queryResult.getKnowledgeAnswers();
+        for (KnowledgeAnswers.Answer answer : knowledgeAnswers.getAnswersList()) {
+            response.append(answer.getAnswer()).append("\n");
+        }
+
+        response.append(queryResult.getFulfillmentText());
+
+        if (queryResult.hasSentimentAnalysisResult()) {
+            String magnitude = String.format("(Magnitude: %s; ",
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
+                            .getMagnitude());
+            response.append(magnitude);
+
+            String score = String.format("score: %s)",
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
+                            .getScore());
+            response.append(score);
+        }
+
+        return response.toString();
     }
 }
 

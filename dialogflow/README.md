@@ -3,13 +3,14 @@
 This app demonstrates how to make gRPC connections to the [Dialogflow API](https://cloud.google.com/dialogflow-enterprise/)
 
 The app demonstrates how to detect intents:
-- Via Text
-- Via Streaming Audio
+- Via Text / Audio
 - With Sentiment Analysis
 - With Text-to-Speech
 - With Knowledge Connectors
 
-To call the Dialogflow API from Android, you need to get authorization tokens from Firebase Cloud Messaging for them to be accepted by the Dialogflow API. To get this token, this sample uses a Firebase Function (in Node.js) to generate these tokens on the behalf of a service account to be used by the app when making a request to the Dialogflow API.
+To call the Dialogflow API from Android, you need provide authorization tokens with each request. To
+get this token, this sample uses a Firebase Function to genereate these tokens on the behalf of a
+service account. The token is returned to the app via Firebase Cloud Messaging.
 
 ## Prerequisites
 - An Android device or emulator
@@ -18,12 +19,14 @@ To call the Dialogflow API from Android, you need to get authorization tokens fr
 ## Setup
 - Create a project (or use an existing one) in the [Google Cloud Console][cloud-console]
 - Enable the [Dialogflow API](https://console.cloud.google.com/apis/library/dialogflow.googleapis.com).
-- Enable the [IAM Service Account Credentials API](https://pantheon.corp.google.com/apis/library/iamcredentials.googleapis.com).
-- [Enable billing][billing].
-- Be sure that you have gone through the steps by expanding the [Create an agent](https://cloud.google.com/dialogflow-enterprise/docs/quickstart-console#create-an-agent) to create and configure your stopwatch agent.
-- [Import the Dialogflow Agent](https://dialogflow.com/docs/agents/export-import-restore#import) using the `StopwatchAgent.zip` which is located in the `stopwatch` directory. 
-- [Create a Service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) with the following IAM role: `Dialogflow API Client`. Example name: `dialogflow-client`. ([For more info on: how to add roles to a Service Account](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource))
-- Under Dialogflow-client, Click on edit permission icon on the right and add another role as follows and save the changes:
+- Enable the [IAM Service Account Credentials API](https://console.cloud.google.com/apis/library/iamcredentials.googleapis.com).
+- [Enable billing](https://console.cloud.google.com/billing).
+- Be sure that you have gone through the steps by expanding the [Create an agent](https://cloud.google.com/dialogflow-enterprise/docs/quickstart-console#create-an-agent)
+to create and configure your stopwatch agent.
+- [Import the Dialogflow Agent](https://dialogflow.com/docs/agents/export-import-restore#import)
+using the `SampleAgent.zip` which is located in the `resources` directory.
+- [Create a Service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts)
+with the following IAM roles: (Example name: `dialogflow-client`. [For more info on: how to add roles to a Service Account](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource))
   - Dialogflow Client (Used by the app to make detect intent requests)
   - Dialogflow Reader (Used by the app to list knowledge bases)
 - Enable beta features for:
@@ -32,11 +35,13 @@ To call the Dialogflow API from Android, you need to get authorization tokens fr
   - [Knowledge Connectors](https://cloud.google.com/dialogflow-enterprise/docs/knowledge-connectors#enable_beta_features)
 
 ### Setup the app
--Clone this repository `git clone https://github.com/GoogleCloudPlatform/android-docs-samples.git`
-- Replace GCP_PROJECT_ID in strings.xml with your Project ID
+- Clone this repository `git clone https://github.com/GoogleCloudPlatform/android-docs-samples.git`
+- Replace `GCP_PROJECT_ID` in strings.xml with your Project ID
 
 ###  Setup Firebase on the application:
-- Complete the steps for [Add Firebase to your app](https://firebase.google.com/docs/android/setup) and expand the "Create a Firebase project" section for instructions on how to add project to your Firebase console. Note: No need to complete any other sections, they are already done. 
+- Complete the steps for [Add Firebase to your app](https://firebase.google.com/docs/android/setup)
+and expand the "Create a Firebase project" section for instructions on how to add project to your
+Firebase console. Note: No need to complete any other sections, they are already done. 
 - In the [Firebase console](https://console.firebase.google.com/), open the "Authentication" section under Develop.
 - On the **Sign-in Methods** page, enable the **Anonymous** sign-in method.
 - Give the package name of the app as `com.google.cloud.examples.dialogflow`
@@ -45,16 +50,22 @@ To call the Dialogflow API from Android, you need to get authorization tokens fr
 The Firebase Function provides auth tokens to your app, You'll be using a provided sample function to be run with this app.
 
 - Follow the steps in this [guide](https://firebase.google.com/docs/functions/get-started) for: 
-  - "1. Set up Node.js and the Firebase CLI"
-  - "2. Initialize Firebase SDK for Cloud Functions". 
+  - "2. Set up Node.js and the Firebase CLI"
+  - "3. Initialize Firebase SDK for Cloud Functions". 
 - Replace `index.js` file with the [provided index.js](https://github.com/GoogleCloudPlatform/nodejs-docs-samples/blob/master/functions/tokenservice/functions/index.js).
-- Open `index.js`, go to function "generateAccessToken", and replace “SERVICE-ACCOUNT-NAME@YOUR_PROJECT_ID.iam.gserviceaccount.com” with your Service account name (`dialogflow-client`) and project id. 
+- Open `index.js`, go to the `generateAccessToken` function, and replace `SERVICE-ACCOUNT-NAME@YOUR_PROJECT_ID.iam.gserviceaccount.com` with your Service account name (`dialogflow-client`) and project id. 
 - Deploy getOAuthToken method by running command:
 ```
 firebase deploy --only functions
 ```
-- For your "App Engine Default Service Account" add the following IAM role: `Service Account Token Creator` . ([For more info on: how to add roles to a Service Account](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource))
-
+- On the GCP console, add the following IAM role: `Service Account Token Creator` to your
+"App Engine Default Service Account" ([For more info on: how to add roles to a Service Account](https://cloud.google.com/iam/docs/granting-roles-to-service-accounts#granting_access_to_a_service_account_for_a_resource))
+- Open the [Firebase console](https://console.firebase.google.com/)
+  - Select Databases on the side menu
+  - Select Firestore
+  - Click `Start collection`
+  - Title your collection `ShortLivedAuthTOkens` and click Next
+  - Enter `OauthToken` for the Document title and Save
 - For more info please refer (https://firebase.google.com/docs/functions/get-started).
 
 ## Run the app
@@ -68,5 +79,5 @@ firebase deploy --only functions
 [cloud-console]: https://console.cloud.google.com
 [git]: https://git-scm.com/
 [android-studio]: https://developer.android.com/studio
-[billing]: https://console.cloud.google.com/billing?project=_
+[billing]: https://console.cloud.google.com/billing
 [Firebase]: https://firebase.google.com/

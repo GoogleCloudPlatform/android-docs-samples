@@ -1,4 +1,0 @@
-<resources>
-    <string name="app_name">Translate</string>
-    <string name="gcp_project_id">GCP_PROJECT_ID</string>
-</resources>

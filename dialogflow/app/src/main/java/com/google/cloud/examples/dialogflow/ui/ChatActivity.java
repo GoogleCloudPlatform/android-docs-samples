@@ -264,7 +264,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     public void checkPermissions() {
-
         ArrayList<String> arrPerm = new ArrayList<>();
         arrPerm.add(Manifest.permission.INTERNET);
         arrPerm.add(Manifest.permission.RECORD_AUDIO);

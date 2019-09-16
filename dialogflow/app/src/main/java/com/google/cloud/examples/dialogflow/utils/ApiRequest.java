@@ -99,9 +99,7 @@ public class ApiRequest {
                     .build();
 
             // Build the query with the TextInput
-            QueryInput queryInput = QueryInput.newBuilder()
-                    .setText(textInput)
-                    .build();
+            QueryInput queryInput = QueryInput.newBuilder().setText(textInput).build();
 
             DetectIntentRequest detectIntentRequest = getDetectIntentRequest(sessionName,
                     queryInput, tts, sentiment, knowledge, fixedCredentialsProvider);
@@ -202,13 +200,11 @@ public class ApiRequest {
 
         if (queryResult.hasSentimentAnalysisResult()) {
             String magnitude = String.format("(Magnitude: %s; ",
-                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
-                            .getMagnitude());
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getMagnitude());
             response.append(magnitude);
 
             String score = String.format("score: %s)",
-                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment()
-                            .getScore());
+                    queryResult.getSentimentAnalysisResult().getQueryTextSentiment().getScore());
             response.append(score);
         }
 

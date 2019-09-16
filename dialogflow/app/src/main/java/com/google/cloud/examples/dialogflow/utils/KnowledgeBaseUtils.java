@@ -32,7 +32,7 @@ public class KnowledgeBaseUtils {
      * @param projectId Project/agent id.
      */
     public static ArrayList<String> listKnowledgeBases(String projectId,
-                                                       KnowledgeBasesSettings knowledgeBasesSettings)
+            KnowledgeBasesSettings knowledgeBasesSettings)
             throws Exception {
         ArrayList<String> ids = new ArrayList<>();
         // Instantiates a client

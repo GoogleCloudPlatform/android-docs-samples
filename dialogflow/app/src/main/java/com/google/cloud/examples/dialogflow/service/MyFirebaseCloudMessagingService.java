@@ -48,7 +48,6 @@ public class MyFirebaseCloudMessagingService extends FirebaseMessagingService {
      * @param token      :   token received from FCM
      */
     private void handleNotification(String expiryTime, String token) {
-
         AuthUtils.setExpiryTime(expiryTime);
         AuthUtils.token = token;
 

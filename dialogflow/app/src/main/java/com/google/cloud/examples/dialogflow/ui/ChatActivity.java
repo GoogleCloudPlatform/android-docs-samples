@@ -150,9 +150,7 @@ public class ChatActivity extends AppCompatActivity {
         setupRecyclerView();
         initListeners();
         fileName = Objects.requireNonNull(getExternalCacheDir()).getAbsolutePath() + "/temp.raw";
-
         apiRequest = new ApiRequest();
-
     }
 
     /**

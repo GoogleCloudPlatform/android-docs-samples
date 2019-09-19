@@ -38,7 +38,6 @@ import com.google.cloud.dialogflow.v2beta1.SessionsSettings;
 import com.google.cloud.dialogflow.v2beta1.TextInput;
 import com.google.cloud.examples.dialogflow.AppController;
 import com.google.protobuf.ByteString;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

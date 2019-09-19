@@ -17,15 +17,15 @@
 package com.google.cloud.examples.dialogflow.ui;
 
 import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.RecognizerIntent;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,8 +47,13 @@ import com.google.cloud.examples.dialogflow.model.ChatMsgModel;
 import com.google.cloud.examples.dialogflow.utils.ApiRequest;
 import com.google.cloud.examples.dialogflow.utils.AuthUtils;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -67,8 +72,8 @@ public class ChatActivity extends AppCompatActivity {
     private boolean tts = false;
     private boolean knowledge = false;
     private boolean sentiment = false;
-
-    private String voiceInput = "";
+    private boolean audioRequest = false;
+    private String fileName;
 
     /**
      * Broadcast receiver to hide the progress dialog when token is received
@@ -77,9 +82,10 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             alert.dismiss();
-            if (!voiceInput.equals("")) {
-                sendMsg(voiceInput);
-            } else if (!etMsg.getText().toString().trim().equals("")) {
+            if (audioRequest) {
+                audioRequest = false;
+                sendAudio();
+            } else if (!etMsg.getText().toString().trim().isEmpty()) {
                 sendMsg(etMsg.getText().toString().trim());
             }
         }
@@ -143,9 +149,8 @@ public class ChatActivity extends AppCompatActivity {
         initViews();
         setupRecyclerView();
         initListeners();
-
+        fileName = Objects.requireNonNull(getExternalCacheDir()).getAbsolutePath() + "/temp.raw";
         apiRequest = new ApiRequest();
-
     }
 
     /**
@@ -203,20 +208,13 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-
-    /**
-     * function to send the message
-     *
-     * @param msg :   message sent from user
-     */
     private void sendMsg(String msg) {
         if (!TextUtils.isEmpty(msg)) {
             // check if the token is received and expiry time is received and not expired
             if (AuthUtils.isTokenValid()) {
                 addMsg(msg, 1);
                 etMsg.setText("");
-                voiceInput = "";
-                new APIRequest(AuthUtils.token, AuthUtils.expiryTime, msg, tts, sentiment,
+                new APIRequest(AuthUtils.token, AuthUtils.expiryTime, msg, null, tts, sentiment,
                         knowledge).execute();
             } else {
                 // get new token if expired or not received
@@ -228,54 +226,79 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private void sendAudio() {
+        File file = new File(fileName);
+        int size = (int) file.length();
+        byte[] audioBytes = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+            buf.read(audioBytes, 0, audioBytes.length);
+            buf.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // check if the token is expired or if we have not yet requested one
+        if (AuthUtils.isTokenValid()) {
+            etMsg.setText("");
+            audioRequest = false;
+            new APIRequest(AuthUtils.token, AuthUtils.expiryTime, null, audioBytes, tts, sentiment,
+                    knowledge).execute();
+        } else {
+            // get new token if expired or not received
+            audioRequest = true;
+            getNewToken();
+        }
+    }
+
     private void getNewToken() {
         showProgressDialog();
         AuthUtils.callFirebaseFunction();
     }
 
     private void promptSpeechInput() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1000);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-US");
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                "Speak");
-        try {
-            startActivityForResult(intent, 101);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    "Not Supported",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+        final MediaRecorder recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.AMR_NB);
+        recorder.setAudioSamplingRate(8000);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        recorder.setOutputFile(fileName);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == 101) {
-                ArrayList<String> result = data
-                        .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                voiceInput = result.get(0);
-                sendMsg(result.get(0));
-            }
+        try {
+            recorder.prepare();
+        } catch (IOException e) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Failed to record audio",
+                    Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setMessage("Recording")
+                .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        recorder.stop();
+                        recorder.release();
+                        sendAudio();
+                    }
+                })
+                .create();
+
+        recorder.start();
+        alertDialog.show();
     }
 
     public void checkPermissions() {
-        ArrayList<String> arrPerm = new ArrayList<>();
-        arrPerm.add(Manifest.permission.INTERNET);
-        arrPerm.add(Manifest.permission.RECORD_AUDIO);
-        arrPerm.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-        arrPerm.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        String[] permissions = new String[4];
+        permissions[0] = Manifest.permission.INTERNET;
+        permissions[1] = Manifest.permission.RECORD_AUDIO;
+        permissions[2] = Manifest.permission.READ_EXTERNAL_STORAGE;
+        permissions[3] = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-
-        if (!arrPerm.isEmpty()) {
-            String[] permissions = new String[arrPerm.size()];
-            permissions = arrPerm.toArray(permissions);
-            ActivityCompat.requestPermissions(this, permissions, 1);
-        }
+        ActivityCompat.requestPermissions(this, permissions, 1);
     }
 
     @Override
@@ -315,7 +338,6 @@ public class ChatActivity extends AppCompatActivity {
 
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-
                 switch (item.getItemId()) {
                     case R.id.action_tts:
                         tts = !tts;
@@ -342,15 +364,17 @@ public class ChatActivity extends AppCompatActivity {
         private String token;
         private Date expiryTime;
         private String msg;
+        private byte[] audioBytes;
         private boolean tts;
         private boolean sentiment;
         private boolean knowledge;
 
-        public APIRequest(String token, Date expiryTime, String msg, boolean tts, boolean sentiment,
+        APIRequest(String token, Date expiryTime, String msg, byte[] audioBytes, boolean tts, boolean sentiment,
                           boolean knowledge) {
             this.token = token;
             this.expiryTime = expiryTime;
             this.msg = msg;
+            this.audioBytes = audioBytes;
             this.tts = tts;
             this.sentiment = sentiment;
             this.knowledge = knowledge;
@@ -358,13 +382,19 @@ public class ChatActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... voids) {
-            return apiRequest.callAPI(token, expiryTime, msg, tts, sentiment, knowledge);
+            return apiRequest.callAPI(token, expiryTime, msg, audioBytes, tts, sentiment, knowledge);
         }
 
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
-            addMsg(response, 0);
+            if (audioBytes != null) {
+                int index = response.indexOf("|");
+                addMsg(response.substring(index+1), 1);
+                addMsg(response.substring(0, index), 0);
+            } else {
+                addMsg(response, 0);
+            }
         }
     }
 

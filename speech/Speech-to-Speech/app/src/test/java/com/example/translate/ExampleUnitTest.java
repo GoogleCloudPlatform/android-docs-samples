@@ -1,4 +1,4 @@
-package com.example.translate;
+package com.google.cloud.examples.speechtospeech;
 
 import org.junit.Test;
 

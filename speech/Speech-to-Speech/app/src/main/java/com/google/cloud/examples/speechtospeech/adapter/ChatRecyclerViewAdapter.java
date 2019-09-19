@@ -24,8 +24,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.translate.R;
-import com.example.translate.model.ChatMsgModel;
+import com.google.cloud.examples.speechtospeech.R;
+import com.google.cloud.examples.speechtospeech.model.ChatMsgModel;
 
 import java.util.ArrayList;
 

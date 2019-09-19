@@ -20,8 +20,8 @@ package com.google.cloud.examples.speechtospeech.service;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.translate.AppController;
-import com.example.translate.utils.AuthUtils;
+import com.google.cloud.examples.speechtospeech.AppController;
+import com.google.cloud.examples.speechtospeech.utils.AuthUtils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

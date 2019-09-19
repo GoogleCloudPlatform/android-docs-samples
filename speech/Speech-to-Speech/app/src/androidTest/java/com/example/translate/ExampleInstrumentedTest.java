@@ -1,4 +1,4 @@
-package com.example.translate;
+package com.google.cloud.examples.speechtospeech;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.translate", appContext.getPackageName());
+        assertEquals("com.google.cloud.examples.speechtospeech", appContext.getPackageName());
     }
 }

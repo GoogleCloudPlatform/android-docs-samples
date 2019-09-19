@@ -21,12 +21,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.translate.AppController;
-import com.example.translate.R;
-import com.example.translate.adapter.LanguageAdapter;
-import com.example.translate.adapter.VoiceAdapter;
-import com.example.translate.utils.ApiRequest;
-import com.example.translate.utils.AuthUtils;
+import com.google.cloud.examples.speechtospeech.AppController;
+import com.google.cloud.examples.speechtospeech.R;
+import com.google.cloud.examples.speechtospeech.adapter.LanguageAdapter;
+import com.google.cloud.examples.speechtospeech.adapter.VoiceAdapter;
+import com.google.cloud.examples.speechtospeech.utils.ApiRequest;
+import com.google.cloud.examples.speechtospeech.utils.AuthUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;

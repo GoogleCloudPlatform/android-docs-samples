@@ -24,12 +24,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.translate.AppController;
-import com.example.translate.R;
-import com.example.translate.adapter.ChatRecyclerViewAdapter;
-import com.example.translate.model.ChatMsgModel;
-import com.example.translate.utils.ApiRequest;
-import com.example.translate.utils.AuthUtils;
+import com.google.cloud.examples.speechtospeech.AppController;
+import com.google.cloud.examples.speechtospeech.R;
+import com.google.cloud.examples.speechtospeech.adapter.ChatRecyclerViewAdapter;
+import com.google.cloud.examples.speechtospeech.model.ChatMsgModel;
+import com.google.cloud.examples.speechtospeech.utils.ApiRequest;
+import com.google.cloud.examples.speechtospeech.utils.AuthUtils;
 
 import java.util.ArrayList;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.example.translate.ui;
+package com.google.cloud.examples.speechtospeech.ui;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.translate.adapter;
+package com.google.cloud.examples.speechtospeech.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

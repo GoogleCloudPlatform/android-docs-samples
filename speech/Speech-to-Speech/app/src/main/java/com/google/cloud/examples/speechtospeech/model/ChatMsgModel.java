@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.translate.model;
+package com.google.cloud.examples.speechtospeech.model;
 
 public class ChatMsgModel {
 

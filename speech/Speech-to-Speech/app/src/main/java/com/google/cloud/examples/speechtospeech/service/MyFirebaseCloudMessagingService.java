@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.example.translate.service;
+package com.google.cloud.examples.speechtospeech.service;
 
 import android.content.Intent;
 import android.util.Log;

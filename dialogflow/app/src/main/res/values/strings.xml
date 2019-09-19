@@ -1,0 +1,8 @@
+<resources>
+<string name="app_name">Dialogflow</string>
+<string name="gcp_project_id">GCP_PROJECT_ID</string>
+<string name="knowledge_connectors">Knowledge Connectors</string>
+<string name="sentiment_analysis">Sentiment Analysis</string>
+<string name="text_to_speech">Text to speech</string>
+<string name="mic">Mic</string>
+</resources>

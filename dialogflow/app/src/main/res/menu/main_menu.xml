@@ -1,0 +1,20 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="all">
+        <item android:id="@+id/action_tts"
+            android:title="@string/text_to_speech"
+            android:orderInCategory="1"
+            app:showAsAction="always" />
+
+        <item android:id="@+id/action_sentiment"
+            android:title="@string/sentiment_analysis"
+            android:orderInCategory="2"
+            app:showAsAction="always" />
+
+        <item
+            android:id="@+id/action_knowledge"
+            android:title="@string/knowledge_connectors"
+            android:orderInCategory="3"
+            app:showAsAction="always"/>
+    </group>
+</menu>

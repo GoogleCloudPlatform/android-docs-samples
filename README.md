@@ -1,3 +1,7 @@
+![status: inactive](https://img.shields.io/badge/status-inactive-red.svg)
+
+This project is no longer actively developed or maintained.
+
 ## Android Docs Samples
 
 [![CircleCI](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples.svg?style=svg)](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples)

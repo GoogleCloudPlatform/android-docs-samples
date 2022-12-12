@@ -4,7 +4,7 @@ This project is no longer actively developed or maintained.
 
 ## Android Docs Samples
 
-[![CircleCI](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples.svg?style=svg)](https://circleci.com/gh/GoogleCloudPlatform/android-docs-samples)
+![Kokoro Build Status](https://storage.googleapis.com/cloud-devrel-kokoro-resources/java/badges/android-docs-samples.png)
 
 This is a repository that contains Android code snippets on Google Cloud
 Platform Documentation.
